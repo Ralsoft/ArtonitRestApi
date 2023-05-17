@@ -21,6 +21,8 @@ namespace ArtonitRestApi
                 if (!Directory.Exists($@"{MainPath}\log"))
                     Directory.CreateDirectory($@"{MainPath}\log");
 
+                SettingsService.Update();
+
                 owin = new OwinService();
             }
             catch (Exception ex)
