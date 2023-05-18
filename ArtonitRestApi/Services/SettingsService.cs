@@ -16,6 +16,14 @@ namespace ArtonitRestApi.Services
         public static int Port = 8000;
 
 
+        public string _uri
+        {
+            get { return Uri; }
+            set { Uri = value; }
+        }
+
+        public static string Uri = "http://*:8000";
+
         public string _databaseConnectionString
         {
             get { return DatabaseConnectionString; }
@@ -43,6 +51,7 @@ namespace ArtonitRestApi.Services
 
                 Port = settings._port;
                 DatabaseConnectionString = settings._databaseConnectionString;
+                Uri = settings._uri;
             }
         }
     }
