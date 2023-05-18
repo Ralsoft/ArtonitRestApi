@@ -275,11 +275,13 @@
     <Compile Include="Controllers\GrzController.cs" />
     <Compile Include="Controllers\MainController.cs" />
     <Compile Include="Controllers\PlaceController.cs" />
+    <Compile Include="Controllers\SSAccessUserController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Annotation\DatabaseNameAttribute.cs" />
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\GrzModel.cs" />
     <Compile Include="Models\PlaceModel.cs" />
+    <Compile Include="Models\Ss_accessuser.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\PeopleModel.cs" />
     <Compile Include="ProjectInstaller.cs">

@@ -33,6 +33,19 @@ namespace ArtonitRestApi.Controllers
             return DatabaseService.GetList<People>(query);
         }
 
+
+        [HttpGet]
+        public People UserGetByCard(string card)
+        {
+            var query = $@"select p.ID_PEP, p.ID_DB, p.ID_ORG, p.SURNAME, p.NAME, p.PATRONYMIC, p.DATEBIRTH,
+                    p.PLACELIFE, p.PLACEREG, p.PHONEHOME, p.PHONECELLULAR, p.PHONEWORK,
+                    p.NUMDOC, p.DATEDOC, p.PLACEDOC, p.PHOTO, p.WORKSTART, p.WORKEND, p.""ACTIVE"" , p.FLAG,
+                    p.LOGIN, p.PSWD, p.PEPTYPE, p.POST, p.PLACEBIRTH, p.NOTE, p.ID_AREA, p.TABNUM
+                    from people p join card c on c.id_pep = p.id_pep where c.id_card = '{card}';";
+
+            return DatabaseService.Get<People>(query);
+        }
+
         [HttpPost]
         public string UserAdd([FromBody] People body)
         {
