@@ -1,6 +1,8 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Services;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace ArtonitRestApi.Controllers
@@ -25,21 +27,39 @@ namespace ArtonitRestApi.Controllers
 
 
         [HttpPost]
-        public string UserAccessAdd([FromBody] Ss_accessuser body)
+        public HttpResponseMessage UserAccessAdd([FromBody] Ss_accessuser body)
         {
             body.IdDb = 1;
 
-            return DatabaseService.Create(body);
+            var result = DatabaseService.Create(body);
 
-
+            if (result == "ok")
+            {
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            else
+            {
+                HttpError err = new HttpError(result);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, err);
+            }
         }
       
         [HttpDelete]
-        public string UserAccessDel(int userId, int accessnameId)
+        public HttpResponseMessage UserAccessDel(int userId, int accessnameId)
         {
-            var query = $"delete from ss_accessuser ssa where ssa.id_pep ={userId} and ssa.id_accessname={accessnameId}";
+            var query = $"delete from ss_accessuser ssa where ssa.id_pep = {userId} and ssa.id_accessname={accessnameId}";
 
-            return DatabaseService.ExecuteNonQuery(query);
+            var result = DatabaseService.ExecuteNonQuery(query);
+
+            if (result == "ok")
+            {
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            else
+            {
+                HttpError err = new HttpError(result);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, err);
+            }
         }
     }
 }

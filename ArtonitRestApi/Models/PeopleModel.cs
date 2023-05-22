@@ -6,6 +6,7 @@ namespace ArtonitRestApi.Models
     public class People
     {
         [DatabaseName("ID_PEP")]
+        [DatabasePrimaryKey]
         private int _id;
 
         [DatabaseName("ID_DB")]

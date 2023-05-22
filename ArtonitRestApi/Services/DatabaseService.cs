@@ -198,7 +198,7 @@ namespace ArtonitRestApi.Services
                     var cmd = new FbCommand(query, connection);
                     cmd.ExecuteNonQuery();
 
-                    return "successful";
+                    return "ok";
                 }
                 catch (Exception ex)
                 {
@@ -224,7 +224,7 @@ namespace ArtonitRestApi.Services
                     var cmd = new FbCommand(query, connection);
                     cmd.ExecuteNonQuery();
 
-                    return "successful addition";
+                    return "ok";
                 }
                 catch (Exception ex)
                 {
@@ -337,6 +337,11 @@ namespace ArtonitRestApi.Services
 
             foreach (var field in fields)
             {
+                var databasePrimaryKeyAttribute = (DatabasePrimaryKeyAttribute)
+                    Attribute.GetCustomAttribute(field, typeof(DatabasePrimaryKeyAttribute));
+
+                if (databasePrimaryKeyAttribute != null) continue;
+
                 var databaseNameAttribute = (DatabaseNameAttribute) 
                     Attribute.GetCustomAttribute(field, typeof(DatabaseNameAttribute));
                
@@ -362,6 +367,11 @@ namespace ArtonitRestApi.Services
 
             foreach (var field in fields)
             {
+                var databasePrimaryKeyAttribute = (DatabasePrimaryKeyAttribute)
+                   Attribute.GetCustomAttribute(field, typeof(DatabasePrimaryKeyAttribute));
+
+                if (databasePrimaryKeyAttribute != null) continue;
+
                 var value = field.GetValue(instance);
 
                 if (value != null)
