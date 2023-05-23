@@ -309,7 +309,9 @@
     <Compile Include="Annotation\DatabaseNameAttribute.cs" />
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\GrzModel.cs" />
+    <Compile Include="Models\MyClaimTypes.cs" />
     <Compile Include="Models\PlaceModel.cs" />
+    <Compile Include="Models\RightsVerificationModel.cs" />
     <Compile Include="Models\Ss_accessuser.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\PeopleModel.cs" />

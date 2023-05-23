@@ -3,6 +3,7 @@ using ArtonitRestApi.Services;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Web.Http;
 
 namespace ArtonitRestApi.Controllers
@@ -13,11 +14,34 @@ namespace ArtonitRestApi.Controllers
         [HttpGet]
         public People UserGetById(string id)
         {
-            var query = "select ID_PEP, ID_DB, ID_ORG, SURNAME, NAME, PATRONYMIC," +
-                "DATEBIRTH, PLACELIFE, PLACEREG, PHONEHOME, PHONECELLULAR, PHONEWORK," +
-                 @"NUMDOC, DATEDOC, PLACEDOC, PHOTO, WORKSTART, WORKEND, ""ACTIVE"" , FLAG," +
-                "LOGIN, PSWD, PEPTYPE, POST, PLACEBIRTH, NOTE, ID_AREA, TABNUM " +
-                $"from people where ID_PEP = {id}";
+            var userIdentity = ClaimsPrincipal.Current;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+
+            var query = $@"select ID_PEP, ID_DB, p.ID_ORG, SURNAME, p.NAME, PATRONYMIC,
+                DATEBIRTH, PLACELIFE, PLACEREG, PHONEHOME, PHONECELLULAR, PHONEWORK,
+                NUMDOC, DATEDOC, PLACEDOC, PHOTO, WORKSTART, WORKEND, ""ACTIVE"" , p.FLAG,
+                LOGIN, PSWD, PEPTYPE, POST, PLACEBIRTH, NOTE, ID_AREA, TABNUM
+                from people p
+                join organization_getchild (1, (select p2. id_orgctrl from people p2 where p2.id_pep={idPep})) og on p.id_org=og.id_org
+                where p.ID_PEP = {id}";
+
+            return DatabaseService.Get<People>(query);
+        }
+
+        [HttpGet]
+        public People UserGetByCard(string card, int cardType)
+        {
+            var userIdentity = ClaimsPrincipal.Current;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+
+            var query = $@"select p.ID_PEP, p.ID_DB, p.ID_ORG, p.SURNAME, p.NAME, p.PATRONYMIC, p.DATEBIRTH,
+                    p.PLACELIFE, p.PLACEREG, p.PHONEHOME, p.PHONECELLULAR, p.PHONEWORK,
+                    p.NUMDOC, p.DATEDOC, p.PLACEDOC, p.PHOTO, p.WORKSTART, p.WORKEND, p.""ACTIVE"" , p.FLAG,
+                    p.LOGIN, p.PSWD, p.PEPTYPE, p.POST, p.PLACEBIRTH, p.NOTE, p.ID_AREA, p.TABNUM
+                    from people p
+                    join card c on c.id_pep = p.id_pep
+                    join organization_getchild (1, (select p2. id_orgctrl from people p2 where p2.id_pep={idPep})) 
+                    og on p.id_org=og.id_org where c.id_card containing '{card}' and c.id_cardtype={cardType};";
 
             return DatabaseService.Get<People>(query);
         }
@@ -25,31 +49,39 @@ namespace ArtonitRestApi.Controllers
         [HttpGet]
         public List<People> UserListGet()
         {
-            var query = "select ID_PEP, ID_DB, ID_ORG, SURNAME, NAME, PATRONYMIC," +
-                "DATEBIRTH, PLACELIFE, PLACEREG, PHONEHOME, PHONECELLULAR, PHONEWORK," +
-                @"NUMDOC, DATEDOC, PLACEDOC, PHOTO, WORKSTART, WORKEND, ""ACTIVE"" , FLAG," +
-                "LOGIN, PSWD, PEPTYPE, POST, PLACEBIRTH, NOTE, ID_AREA, TABNUM " +
-                $"from people";
+            var userIdentity = ClaimsPrincipal.Current;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+
+            var query = $@"select ID_PEP, ID_DB, ID_ORG, SURNAME, NAME, PATRONYMIC,
+                DATEBIRTH, PLACELIFE, PLACEREG, PHONEHOME, PHONECELLULAR, PHONEWORK,
+                NUMDOC, DATEDOC, PLACEDOC, PHOTO, WORKSTART, WORKEND, ""ACTIVE"" , FLAG,
+                LOGIN, PSWD, PEPTYPE, POST, PLACEBIRTH, NOTE, ID_AREA, TABNUM
+                from people p
+                where p.id_org in (select id_org from 
+                organization_getchild (1, (select p2.id_orgctrl from people p2 where p2.id_pep={idPep})))";
 
             return DatabaseService.GetList<People>(query);
-        }
-
-
-        [HttpGet]
-        public People UserGetByCard(string card, int cardType)
-        {
-            var query = $@"select p.ID_PEP, p.ID_DB, p.ID_ORG, p.SURNAME, p.NAME, p.PATRONYMIC, p.DATEBIRTH,
-                    p.PLACELIFE, p.PLACEREG, p.PHONEHOME, p.PHONECELLULAR, p.PHONEWORK,
-                    p.NUMDOC, p.DATEDOC, p.PLACEDOC, p.PHOTO, p.WORKSTART, p.WORKEND, p.""ACTIVE"" , p.FLAG,
-                    p.LOGIN, p.PSWD, p.PEPTYPE, p.POST, p.PLACEBIRTH, p.NOTE, p.ID_AREA, p.TABNUM
-                    from people p join card c on c.id_pep = p.id_pep where c.id_card containing '{card}' and c.id_cardtype={cardType};";
-
-            return DatabaseService.Get<People>(query);
         }
 
         [HttpPost]
         public HttpResponseMessage UserAdd([FromBody] People body)
         {
+            var userIdentity = ClaimsPrincipal.Current;
+            var idOrgCtrl = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+
+            var query = $@"select og.id_org from organization_getchild 
+                (1, (select p. id_orgctrl from people p where p.id_pep={idPep})) 
+                og where og.id_org={idOrgCtrl}";
+
+            var verify = DatabaseService.Get<RightsVerificationModel>(query);
+
+            if(verify.Id == 0)
+            {
+                HttpError err = new HttpError("не хватает прав авторизации");
+                return Request.CreateResponse(HttpStatusCode.Unauthorized, err);
+            }
+
             body.IdDb = 1;
             body.IdArea = 0;
 
@@ -69,6 +101,21 @@ namespace ArtonitRestApi.Controllers
         [HttpPatch]
         public HttpResponseMessage UserUpdate([FromBody] People body, int id)
         {
+            var userIdentity = ClaimsPrincipal.Current;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+
+            var queryVerify = $@"select p2.id_pep from people p2 
+                join organization_getchild (1, (select p. id_orgctrl from people p where p.id_pep={idPep})) 
+                og on p2.id_org=og.id_org where p2.id_pep={id}";
+
+            var verify = DatabaseService.Get<RightsVerificationModel>(queryVerify);
+
+            if (verify.Id == 0)
+            {
+                HttpError err = new HttpError("не хватает прав авторизации");
+                return Request.CreateResponse(HttpStatusCode.Unauthorized, err);
+            }
+
 
             var query = DatabaseService.GenerateUpdateQuery(body, $"ID_PEP={id}");
 
@@ -89,6 +136,21 @@ namespace ArtonitRestApi.Controllers
         [HttpDelete]
         public HttpResponseMessage UserDelete(int id)
         {
+            var userIdentity = ClaimsPrincipal.Current;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+
+            var queryVerify = $@"select p2.id_pep from people p2
+                join organization_getchild (1, (select p.id_orgctrl from people p where p.id_pep={idPep})) 
+                og on p2.id_org=og.id_org where p2.id_pep={id}";
+
+            var verify = DatabaseService.Get<RightsVerificationModel>(queryVerify);
+
+            if (verify.Id == 0)
+            {
+                HttpError err = new HttpError("не хватает прав авторизации");
+                return Request.CreateResponse(HttpStatusCode.Unauthorized, err);
+            }
+
             var query = $"delete from person where ID_PEP={id}";
 
             var result = DatabaseService.ExecuteNonQuery(query);

@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin.Security.OAuth;
+﻿using ArtonitRestApi.Models;
+using Microsoft.Owin.Security.OAuth;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -26,8 +27,9 @@ namespace ArtonitRestApi.Services
             }
 
             var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-            identity.AddClaim(new Claim(ClaimTypes.Name, user.Username));
+            identity.AddClaim(new Claim(ClaimTypes.Name, user.Id.ToString()));
+            identity.AddClaim(new Claim(ClaimTypes.Role, user.Flag));
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.IdOgrCtrl.ToString()));
 
             context.Validated(identity);
         }
