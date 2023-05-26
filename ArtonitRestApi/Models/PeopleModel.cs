@@ -7,13 +7,13 @@ namespace ArtonitRestApi.Models
     {
 
         [DatabaseName("ID_PEP")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [DatabaseName("ID_DB")]
-        public int IdDb { get; set; }
+        public int? IdDb { get; set; }
         
         [DatabaseName("ID_ORG")]
-        public int IdOrg { get; set; }
+        public int? IdOrg { get; set; }
 
         [DatabaseName("SURNAME")]
         public string Surname { get; set; }
@@ -65,7 +65,7 @@ namespace ArtonitRestApi.Models
         public int Active { get; set; }
 
         [DatabaseName("FLAG")]
-        public int Flag { get; set; }
+        public int? Flag { get; set; }
 
         [DatabaseName("LOGIN")]
         public string Login { get; set; }
@@ -74,7 +74,7 @@ namespace ArtonitRestApi.Models
         public string Password { get; set; }
 
         [DatabaseName("PEPTYPE")]
-        public int PepType { get; set; }
+        public int? PepType { get; set; }
 
         [DatabaseName("POST")]
         public string Post { get; set; }
@@ -86,7 +86,7 @@ namespace ArtonitRestApi.Models
         public string Note { get; set; }
 
         [DatabaseName("ID_AREA")]
-        public int IdArea { get; set; }
+        public int? IdArea { get; set; }
 
         [DatabaseName("TABNUM")]
         public string TabNum { get; set; }

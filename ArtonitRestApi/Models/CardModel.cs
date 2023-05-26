@@ -10,18 +10,18 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace ArtonitRestApi.Models
 {
+    [DatabaseName("Card")]
     public class CardModel
     {
-
         [DatabaseName("ID_CARDTYPE")]
-        public int CardType { get; set; }
+        public int? CardType { get; set; }
 
         [DatabaseName("ID_CARD")]
         public string CardValue { get; set; }
 
         [DatabaseName("ACTIVE")]
         [DataBaseSystemWord]
-        public bool Active { get; set; }
+        public int? Active { get; set; }
 
         [DatabaseName("TIMESTART")]
         public DateTime DateStart { get; set; }

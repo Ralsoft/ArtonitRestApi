@@ -2,7 +2,7 @@
 
 namespace ArtonitRestApi.Models
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
     public class DatabaseNameAttribute : Attribute
     {
         public string Value { get; }

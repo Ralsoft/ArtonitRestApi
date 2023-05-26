@@ -235,7 +235,14 @@ namespace ArtonitRestApi.Services
 
         public static string GenerateUpdateQuery<T>(T instance, string condition)
         {
-            string query = $"update {typeof(T).Name} set ";
+            var classNameAttribute = (DatabaseNameAttribute)
+                        Attribute.GetCustomAttribute(typeof(T), typeof(DatabaseNameAttribute));
+            string query;
+
+            if(classNameAttribute != null)
+                query = $"update {classNameAttribute.Value} set ";
+            else
+                query = $"update {typeof(T).Name} set ";
 
             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                BindingFlags.NonPublic | BindingFlags.Public);
@@ -247,7 +254,7 @@ namespace ArtonitRestApi.Services
                 if (value != null)
                 {
                    var databaseNameAttribute = (DatabaseNameAttribute)
-                   Attribute.GetCustomAttribute(property, typeof(DatabaseNameAttribute));
+                        Attribute.GetCustomAttribute(property, typeof(DatabaseNameAttribute));
 
                     if (databaseNameAttribute != null)
                     {
@@ -269,8 +276,7 @@ namespace ArtonitRestApi.Services
                             case "Int32":
                                 {
                                     var valueInt = Convert.ToInt32(value);
-                                    if (valueInt == 0) continue;
-
+                                   
                                     if (systemWord != null)
                                         query += $@"""{databaseNameAttribute.Value}"" = ";
                                     else
