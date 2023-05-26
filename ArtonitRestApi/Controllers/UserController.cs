@@ -1,5 +1,6 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Services;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -8,6 +9,7 @@ using System.Web.Http;
 
 namespace ArtonitRestApi.Controllers
 {
+    [Authorize]
     public class UserController : ApiController
     {
 
@@ -15,7 +17,7 @@ namespace ArtonitRestApi.Controllers
         public People UserGetById(string id)
         {
             var userIdentity = ClaimsPrincipal.Current;
-            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var query = $@"select ID_PEP, ID_DB, p.ID_ORG, SURNAME, p.NAME, PATRONYMIC,
                 DATEBIRTH, PLACELIFE, PLACEREG, PHONEHOME, PHONECELLULAR, PHONEWORK,
@@ -26,13 +28,13 @@ namespace ArtonitRestApi.Controllers
                 where p.ID_PEP = {id}";
 
             return DatabaseService.Get<People>(query);
-        }
+        }                   
 
         [HttpGet]
         public People UserGetByCard(string card, int cardType)
         {
             var userIdentity = ClaimsPrincipal.Current;
-            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var query = $@"select p.ID_PEP, p.ID_DB, p.ID_ORG, p.SURNAME, p.NAME, p.PATRONYMIC, p.DATEBIRTH,
                     p.PLACELIFE, p.PLACEREG, p.PHONEHOME, p.PHONECELLULAR, p.PHONEWORK,
@@ -50,7 +52,7 @@ namespace ArtonitRestApi.Controllers
         public List<People> UserListGet()
         {
             var userIdentity = ClaimsPrincipal.Current;
-            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var query = $@"select ID_PEP, ID_DB, ID_ORG, SURNAME, NAME, PATRONYMIC,
                 DATEBIRTH, PLACELIFE, PLACEREG, PHONEHOME, PHONECELLULAR, PHONEWORK,
@@ -67,8 +69,8 @@ namespace ArtonitRestApi.Controllers
         public HttpResponseMessage UserAdd([FromBody] People body)
         {
             var userIdentity = ClaimsPrincipal.Current;
-            var idOrgCtrl = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            var idOrgCtrl = userIdentity?.FindFirst(MyClaimTypes.IdOrgCtrl)?.Value;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var query = $@"select og.id_org from organization_getchild 
                 (1, (select p. id_orgctrl from people p where p.id_pep={idPep})) 
@@ -76,20 +78,28 @@ namespace ArtonitRestApi.Controllers
 
             var verify = DatabaseService.Get<RightsVerificationModel>(query);
 
-            if(verify.Id == 0)
+            if (verify.Id == 0)
             {
                 HttpError err = new HttpError("не хватает прав авторизации");
                 return Request.CreateResponse(HttpStatusCode.Unauthorized, err);
             }
+            var rdbDatabase = DatabaseService.Get<RDBDatabase>("select GEN_ID (gen_people_id, 1) from RDB$DATABASE");
 
+            body.Id = rdbDatabase.Id;
             body.IdDb = 1;
             body.IdArea = 0;
+
+            var defaultDateTime = new DateTime(0);
+
+            if (body.DateBirth == defaultDateTime) body.DateBirth = DateTime.Now;
+            if (body.DateDoc == defaultDateTime) body.DateDoc = DateTime.Now;
+            if(body.IdOrg == 0) body.IdOrg = Convert.ToInt32(idOrgCtrl);
 
             var result = DatabaseService.Create(body);
 
             if(result == "ok")
             {
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.OK, rdbDatabase.Id);
             }
             else
             {
@@ -102,7 +112,7 @@ namespace ArtonitRestApi.Controllers
         public HttpResponseMessage UserUpdate([FromBody] People body, int id)
         {
             var userIdentity = ClaimsPrincipal.Current;
-            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var queryVerify = $@"select p2.id_pep from people p2 
                 join organization_getchild (1, (select p. id_orgctrl from people p where p.id_pep={idPep})) 
@@ -137,7 +147,7 @@ namespace ArtonitRestApi.Controllers
         public HttpResponseMessage UserDelete(int id)
         {
             var userIdentity = ClaimsPrincipal.Current;
-            var idPep = userIdentity?.FindFirst(ClaimTypes.Name)?.Value;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var queryVerify = $@"select p2.id_pep from people p2
                 join organization_getchild (1, (select p.id_orgctrl from people p where p.id_pep={idPep})) 

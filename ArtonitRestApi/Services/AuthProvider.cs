@@ -27,9 +27,9 @@ namespace ArtonitRestApi.Services
             }
 
             var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-            identity.AddClaim(new Claim(ClaimTypes.Name, user.Id.ToString()));
-            identity.AddClaim(new Claim(ClaimTypes.Role, user.Flag));
-            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.IdOgrCtrl.ToString()));
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+            identity.AddClaim(new Claim(MyClaimTypes.Flag, user.Flag));
+            identity.AddClaim(new Claim(MyClaimTypes.IdOrgCtrl, user.IdOgrCtrl.ToString()));
 
             context.Validated(identity);
         }

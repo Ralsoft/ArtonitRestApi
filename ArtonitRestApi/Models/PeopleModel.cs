@@ -5,119 +5,90 @@ namespace ArtonitRestApi.Models
 {
     public class People
     {
+
         [DatabaseName("ID_PEP")]
-        [DatabasePrimaryKey]
-        private int _id;
+        public int Id { get; set; }
 
         [DatabaseName("ID_DB")]
-        private int _idDb;
-
+        public int IdDb { get; set; }
+        
         [DatabaseName("ID_ORG")]
-        private int _org;
+        public int IdOrg { get; set; }
 
         [DatabaseName("SURNAME")]
-        private string _surname;
+        public string Surname { get; set; }
 
         [DatabaseName("NAME")]
-        private string _name;
+        public string Name { get; set; }
 
         [DatabaseName("PATRONYMIC")]
-        private string _patronymic;
+        public string Patronymic { get; set; }
 
         [DatabaseName("DATEBIRTH")]
-        private DateTime _birth;
+        public DateTime DateBirth { get; set; }
 
         [DatabaseName("PLACELIFE")]
-        private string _address;
+        public string PlaceLife { get; set; }
 
         [DatabaseName("PLACEREG")]
-        private string _registration;
+        public string PlaceReg { get; set; }
 
         [DatabaseName("PHONEHOME")]
-        private string _homePhone;
+        public string PhoneHome { get; set; }
 
         [DatabaseName("PHONECELLULAR")]
-        private string _cellularPhone;
+        public string PhoneCellular { get; set; }
 
         [DatabaseName("PHONEWORK")]
-        private string _workPhone;
+        public string PhoneWork { get; set; }
 
         [DatabaseName("NUMDOC")]
-        private string _documentNum;
+        public string NumDoc { get; set; }
 
         [DatabaseName("DATEDOC")]
-        private DateTime _documentDate;
+        public DateTime DateDoc { get; set; }
 
         [DatabaseName("PLACEDOC")]
-        private string _documentAddress;
+        public string PlaceDoc { get; set; }
 
         [DatabaseName("PHOTO")]
-        private string _photo;
+        public string Photo { get; set; }
 
         [DatabaseName("WORKSTART")]
-        private TimeSpan _workStart;
+        public TimeSpan WorkStart { get; set; }
 
         [DatabaseName("WORKEND")]
-        private TimeSpan _workEnd;
+        public TimeSpan WorkEnd { get; set; }
 
         [DatabaseName("ACTIVE")]
         [DataBaseSystemWord]
-        private int _active;
+        public int Active { get; set; }
 
         [DatabaseName("FLAG")]
-        private int _flag;
+        public int Flag { get; set; }
 
         [DatabaseName("LOGIN")]
-        private string _login;
+        public string Login { get; set; }
 
         [DatabaseName("PSWD")]
-        private string _password;
+        public string Password { get; set; }
 
         [DatabaseName("PEPTYPE")]
-        private int _pepType;
+        public int PepType { get; set; }
 
         [DatabaseName("POST")]
-        private string _post;
+        public string Post { get; set; }
 
         [DatabaseName("PLACEBIRTH")]
-        private string _birthAddress;
+        public string PlaceBirth { get; set; }
 
         [DatabaseName("NOTE")]
-        private string _note;
+        public string Note { get; set; }
 
         [DatabaseName("ID_AREA")]
-        private int _idArea;
+        public int IdArea { get; set; }
 
         [DatabaseName("TABNUM")]
-        private string _nTab;
-
-        public int Id { get { return _id; } set { _id = value; } }
-        public int IdDb { get { return _idDb; } set { _idDb = value; } }
-        public int IdOrg { get { return _org; } set { _org = value; } }
-        public string Surname { get { return _surname; } set { _surname = value; } }
-        public string Name { get { return _name; } set { _name = value; } }
-        public string Patronymic { get { return _patronymic; } set { _patronymic = value; } }
-        public DateTime DateBirth { get { return _birth; } set { _birth = value; } }
-        public string PlaceLife { get { return _address; } set { _address = value; } }
-        public string PlaceReg { get { return _registration; } set { _registration = value; } }
-        public string PhoneHome { get { return _homePhone; } set { _homePhone = value; } }
-        public string PhoneCellular { get { return _cellularPhone; } set { _cellularPhone = value; } }
-        public string PhoneWork { get { return _workPhone; } set { _workPhone = value; } }
-        public string NumDoc { get { return _documentNum; } set { _documentNum = value; } }
-        public DateTime DateDoc { get { return _documentDate; } set { _documentDate = value; } }
-        public string PlaceDoc { get { return _documentAddress; } set { _documentAddress = value; } }
-        public string Photo { get { return _photo; } set { _photo = value; } }
-        public TimeSpan WorkStart { get { return _workStart; } set { _workStart = value; } }
-        public TimeSpan WorkEnd { get { return _workEnd; } set { _workEnd = value; } }
-        public int Active { get { return _active; } set { _active = value; } }
-        public int Flag { get { return _flag; } set { _flag = value; } }
-        public string Login { get { return _login; } set { _login = value; } }
-        public string Password { get { return _password; } set { _password = value; } }
-        public int PepType { get { return _pepType; } set { _pepType = value; } }
-        public string Post { get { return _post; } set { _post = value; } }
-        public string PlaceBirth { get { return _birthAddress; } set { _birthAddress = value; } }
-        public string Note { get { return _note; } set { _note = value; } }
-        public int IdArea { get { return _idArea; } set { _idArea = value; } }
-        public string TabNum { get { return _nTab; } set { _nTab = value; } }
+        public string TabNum { get; set; }
     }
 }

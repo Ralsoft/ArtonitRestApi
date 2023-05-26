@@ -34,23 +34,23 @@ namespace ArtonitRestApi.Services
                             var instance = (T)Activator.CreateInstance(typeof(T));
 
                             int i = 0;
-                            var fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Static |
+                            var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                                 BindingFlags.NonPublic | BindingFlags.Public);
 
-                            foreach (var field in fields)
+                            foreach (var property in properties)
                             {
-                                switch (field.FieldType.Name)
+                                switch (property.PropertyType.Name)
                                 {
                                     case "String":
                                         {
-                                            field.SetValue(instance, dr.GetValue(i).ToString());
+                                            property.SetValue(instance, dr.GetValue(i).ToString());
                                             break;
                                         }
                                     case "Int32":
                                         {
                                             try
                                             {
-                                                field.SetValue(instance, Convert.ToInt32(dr.GetValue(i)));
+                                                property.SetValue(instance, Convert.ToInt32(dr.GetValue(i)));
                                             }
                                             catch (Exception ex)
                                             {
@@ -64,12 +64,12 @@ namespace ArtonitRestApi.Services
                                         {
                                             try
                                             {
-                                                field.SetValue(instance, DateTime.Parse(dr.GetValue(i).ToString()));
+                                                property.SetValue(instance, DateTime.Parse(dr.GetValue(i).ToString()));
                                             }
                                             catch (Exception ex)
                                             {
                                                 LoggerService.Log<DatabaseService>("Exception",
-                                                    $"{ex.Message} | value = {dr.GetValue(i)} | i = {i} row = {row}| field.Name = {field.Name}");
+                                                    $"{ex.Message} | value = {dr.GetValue(i)} | i = {i} row = {row}| field.Name = {property.Name}");
                                             }
 
                                             break;
@@ -78,7 +78,7 @@ namespace ArtonitRestApi.Services
                                         {
                                             try
                                             {
-                                                field.SetValue(instance, TimeSpan.Parse(dr.GetValue(i).ToString()));
+                                                property.SetValue(instance, TimeSpan.Parse(dr.GetValue(i).ToString()));
                                             }
                                             catch (Exception ex)
                                             {
@@ -89,7 +89,7 @@ namespace ArtonitRestApi.Services
                                             break;
                                         }
                                     default:
-                                        field.SetValue(instance, dr.GetValue(i).ToString());
+                                        property.SetValue(instance, dr.GetValue(i).ToString());
                                         break;
                                 }
 
@@ -131,37 +131,35 @@ namespace ArtonitRestApi.Services
                         while (dr.Read())
                         {
                             int i = 0;
-                            var fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Static |
+                            var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                                 BindingFlags.NonPublic | BindingFlags.Public);
 
-                            foreach (var field in fields)
+                            foreach (var property in properties)
                             {
-                                LoggerService.Log<DatabaseService>("Info", $"{field.FieldType.Name}");
-
-                                switch (field.FieldType.Name)
+                                switch (property.PropertyType.Name)
                                 {
                                     case "String":
                                         {
-                                            field.SetValue(instance, dr.GetValue(i).ToString());
+                                            property.SetValue(instance, dr.GetValue(i).ToString());
                                             break;
                                         }
                                     case "Int32":
                                         {
-                                            field.SetValue(instance, Convert.ToInt32(dr.GetValue(i)));
+                                            property.SetValue(instance, Convert.ToInt32(dr.GetValue(i)));
                                             break;
                                         }
                                     case "DateTime":
                                         {
-                                            field.SetValue(instance, DateTime.Parse(dr.GetValue(i).ToString()));
+                                            property.SetValue(instance, DateTime.Parse(dr.GetValue(i).ToString()));
                                             break;
                                         }
                                     case "TimeSpan":
                                         {
-                                            field.SetValue(instance, TimeSpan.Parse(dr.GetValue(i).ToString()));
+                                            property.SetValue(instance, TimeSpan.Parse(dr.GetValue(i).ToString()));
                                             break;
                                         }
                                     default:
-                                        field.SetValue(instance, dr.GetValue(i).ToString());
+                                        property.SetValue(instance, dr.GetValue(i).ToString());
                                         break;
                                 }
 
@@ -239,22 +237,22 @@ namespace ArtonitRestApi.Services
         {
             string query = $"update {typeof(T).Name} set ";
 
-            var fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Static |
+            var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                BindingFlags.NonPublic | BindingFlags.Public);
 
-            foreach (var field in fields)
+            foreach (var property in properties)
             {
-                var value = field.GetValue(instance);
+                var value = property.GetValue(instance);
 
                 if (value != null)
                 {
                    var databaseNameAttribute = (DatabaseNameAttribute)
-                   Attribute.GetCustomAttribute(field, typeof(DatabaseNameAttribute));
+                   Attribute.GetCustomAttribute(property, typeof(DatabaseNameAttribute));
 
                     if (databaseNameAttribute != null)
                     {
                         var systemWord = (DataBaseSystemWordAttribute)
-                            Attribute.GetCustomAttribute(field, typeof(DataBaseSystemWordAttribute));
+                            Attribute.GetCustomAttribute(property, typeof(DataBaseSystemWordAttribute));
 
                         switch (value.GetType().Name)
                         {
@@ -331,23 +329,23 @@ namespace ArtonitRestApi.Services
         {
             string query = $"insert into {typeof(T).Name} (";
 
-            var fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Static |
+            var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                 BindingFlags.NonPublic | BindingFlags.Public);
 
-            foreach (var field in fields)
+            foreach (var property in properties)
             {
                 var databasePrimaryKeyAttribute = (DatabasePrimaryKeyAttribute)
-                    Attribute.GetCustomAttribute(field, typeof(DatabasePrimaryKeyAttribute));
+                    Attribute.GetCustomAttribute(property, typeof(DatabasePrimaryKeyAttribute));
 
                 if (databasePrimaryKeyAttribute != null) continue;
 
                 var databaseNameAttribute = (DatabaseNameAttribute) 
-                    Attribute.GetCustomAttribute(field, typeof(DatabaseNameAttribute));
+                    Attribute.GetCustomAttribute(property, typeof(DatabaseNameAttribute));
                
                 if (databaseNameAttribute != null)
                 {
                     var systemWord = (DataBaseSystemWordAttribute) 
-                        Attribute.GetCustomAttribute(field, typeof(DataBaseSystemWordAttribute));
+                        Attribute.GetCustomAttribute(property, typeof(DataBaseSystemWordAttribute));
 
                     if(systemWord != null)
                     {
@@ -364,14 +362,14 @@ namespace ArtonitRestApi.Services
 
             query += ") values (";
 
-            foreach (var field in fields)
+            foreach (var property in properties)
             {
                 var databasePrimaryKeyAttribute = (DatabasePrimaryKeyAttribute)
-                   Attribute.GetCustomAttribute(field, typeof(DatabasePrimaryKeyAttribute));
+                   Attribute.GetCustomAttribute(property, typeof(DatabasePrimaryKeyAttribute));
 
                 if (databasePrimaryKeyAttribute != null) continue;
 
-                var value = field.GetValue(instance);
+                var value = property.GetValue(instance);
 
                 if (value != null)
                 {

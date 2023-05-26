@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ArtonitRestApi.Annotation
 {
-    [AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Property)]
     public class DatabasePrimaryKeyAttribute : Attribute
     {
     }
