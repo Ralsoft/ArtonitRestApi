@@ -22,7 +22,7 @@ namespace ArtonitRestApi.Services
             set { Uri = value; }
         }
 
-        public static string Uri = "http://*:8000";
+        public static string Uri = "http://*:8011";
 
         public string _databaseConnectionString
         {

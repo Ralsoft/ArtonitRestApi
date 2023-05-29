@@ -302,12 +302,16 @@
     <Compile Include="Annotation\DataBaseSystemWordAttribute.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="Controllers\CardController.cs" />
+    <Compile Include="Controllers\ParkingController.cs" />
     <Compile Include="Controllers\GrzController.cs" />
     <Compile Include="Controllers\MainController.cs" />
+    <Compile Include="Controllers\GarageController.cs" />
     <Compile Include="Controllers\PlaceController.cs" />
     <Compile Include="Controllers\SSAccessUserController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Annotation\DatabaseNameAttribute.cs" />
+    <Compile Include="Models\ParkingModel.cs" />
+    <Compile Include="Models\GarageModel.cs" />
     <Compile Include="Models\CardModel.cs" />
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\GrzModel.cs" />

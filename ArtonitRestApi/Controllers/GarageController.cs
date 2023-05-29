@@ -1,0 +1,90 @@
+﻿using ArtonitRestApi.Models;
+using ArtonitRestApi.Services;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Security.Claims;
+using System.Web.Http;
+
+namespace ArtonitRestApi.Controllers
+{
+    public class GarageController : ApiController
+    {
+
+        /// <summary>
+        /// Получает список гаражей из базы данных по запросу select * from HL_GARAGENAME
+        /// </summary>
+        /// <returns>Список мест в формате json</returns>
+
+        [HttpGet]
+        public List<GarageModel> GetGarageList()
+        {
+          var query = $@"select hlgn.id, hlgn.name, hlgn.created, hlgn.not_count from HL_GARAGENAME hlgn";
+            return DatabaseService.GetList<GarageModel>(query);
+           
+        }
+
+
+
+    /// <summary>
+    /// Добавить гараж на указанную парковку
+    /// </summary>
+    /// <returns>Результат вставки в формате json</returns>
+
+    [HttpPost]
+        
+        public HttpResponseMessage addGarage([FromBody] GarageModel body)
+        {
+            //return Request.CreateResponse(HttpStatusCode.OK);
+            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+        }
+
+        /// <summary>
+        /// Удаляет гараж по указанному id
+        /// </summary>
+        /// <returns>Результат удаления 0 -  успешно, 1 - ошибка</returns>
+        [HttpDelete]
+        public HttpResponseMessage delGarage()
+        {
+            // DatabaseService.GetList<GarageModel>("select * from HL_GARAGENAME");
+            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+        }
+
+        /// <summary>
+        /// Меняет указанные свойства для указаннома гаража
+        /// </summary>
+        /// <returns></returns>
+
+
+        [HttpPatch]
+        public HttpResponseMessage updateGarage()
+        {
+            //DatabaseService.GetList<GarageModel>("select * from HL_GARAGENAME");
+            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+        }
+
+
+        /// <summary>
+        /// Получить список машиномест для указанного гаража
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        
+        [HttpGet]
+        public GarageModel GarageGetById(string id)
+        {
+          var query = $@"select hlgn.id, hlgn.name, hlgn.created, hlgn.not_count from HL_GARAGENAME hlgn
+                where hlgn.id= {id}";
+            return DatabaseService.Get<GarageModel>(query);
+        }
+
+
+
+
+    }
+
+
+
+}

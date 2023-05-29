@@ -9,6 +9,8 @@ namespace ArtonitRestApi.Controllers
 {
     public class SSAccessUserController : ApiController
     {
+        
+        
         [HttpGet]
         public List<Ss_accessuser> UserAccessGet()
         {

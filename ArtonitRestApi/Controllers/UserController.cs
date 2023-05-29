@@ -140,8 +140,9 @@ namespace ArtonitRestApi.Controllers
                 HttpError err = new HttpError(result);
                 return Request.CreateResponse(HttpStatusCode.BadRequest, err);
             }
-        }
-
+        }  
+        
+    
 
         [HttpDelete]
         public HttpResponseMessage UserDelete(int id)
