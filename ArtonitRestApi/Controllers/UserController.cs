@@ -31,12 +31,27 @@ namespace ArtonitRestApi.Controllers
         }                   
 
         [HttpGet]
-        public People UserGetByCard(string card, int cardType)
+        public People UserGetByCard(string card, int? cardType = -1)
         {
             var userIdentity = ClaimsPrincipal.Current;
             var idPep = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var query = $@"select p.ID_PEP, p.ID_DB, p.ID_ORG, p.SURNAME, p.NAME, p.PATRONYMIC, p.DATEBIRTH,
+            string query;
+
+            if (cardType == -1)
+            {
+                query = $@"select p.ID_PEP, p.ID_DB, p.ID_ORG, p.SURNAME, p.NAME, p.PATRONYMIC, p.DATEBIRTH,
+                    p.PLACELIFE, p.PLACEREG, p.PHONEHOME, p.PHONECELLULAR, p.PHONEWORK,
+                    p.NUMDOC, p.DATEDOC, p.PLACEDOC, p.PHOTO, p.WORKSTART, p.WORKEND, p.""ACTIVE"" , p.FLAG,
+                    p.LOGIN, p.PSWD, p.PEPTYPE, p.POST, p.PLACEBIRTH, p.NOTE, p.ID_AREA, p.TABNUM
+                    from people p
+                    join card c on c.id_pep = p.id_pep
+                    join organization_getchild (1, (select p2. id_orgctrl from people p2 where p2.id_pep={idPep})) 
+                    og on p.id_org=og.id_org where c.id_card containing '{card}';";
+            }
+            else
+            {
+                query = $@"select p.ID_PEP, p.ID_DB, p.ID_ORG, p.SURNAME, p.NAME, p.PATRONYMIC, p.DATEBIRTH,
                     p.PLACELIFE, p.PLACEREG, p.PHONEHOME, p.PHONECELLULAR, p.PHONEWORK,
                     p.NUMDOC, p.DATEDOC, p.PLACEDOC, p.PHOTO, p.WORKSTART, p.WORKEND, p.""ACTIVE"" , p.FLAG,
                     p.LOGIN, p.PSWD, p.PEPTYPE, p.POST, p.PLACEBIRTH, p.NOTE, p.ID_AREA, p.TABNUM
@@ -44,6 +59,8 @@ namespace ArtonitRestApi.Controllers
                     join card c on c.id_pep = p.id_pep
                     join organization_getchild (1, (select p2. id_orgctrl from people p2 where p2.id_pep={idPep})) 
                     og on p.id_org=og.id_org where c.id_card containing '{card}' and c.id_cardtype={cardType};";
+            }
+
 
             return DatabaseService.Get<People>(query);
         }
