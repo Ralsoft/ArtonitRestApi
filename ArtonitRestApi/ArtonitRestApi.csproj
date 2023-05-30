@@ -308,7 +308,7 @@
     <Compile Include="Controllers\GarageController.cs" />
     <Compile Include="Controllers\PlaceController.cs" />
     <Compile Include="Controllers\SSAccessUserController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\PeopleController.cs" />
     <Compile Include="Annotation\DatabaseNameAttribute.cs" />
     <Compile Include="Models\ParkingModel.cs" />
     <Compile Include="Models\GarageModel.cs" />
@@ -328,6 +328,7 @@
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\PeopleRepository.cs" />
     <Compile Include="Service1.cs">
       <SubType>Component</SubType>
     </Compile>

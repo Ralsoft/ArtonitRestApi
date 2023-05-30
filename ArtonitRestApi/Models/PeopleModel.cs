@@ -3,18 +3,9 @@ using System;
 
 namespace ArtonitRestApi.Models
 {
-    public class People
+    [DatabaseName("People")]
+    public class PeopleAdd
     {
-
-        [DatabaseName("ID_PEP")]
-        public int? Id { get; set; }
-
-        [DatabaseName("ID_DB")]
-        public int? IdDb { get; set; }
-        
-        [DatabaseName("ID_ORG")]
-        public int? IdOrg { get; set; }
-
         [DatabaseName("SURNAME")]
         public string Surname { get; set; }
 
@@ -90,5 +81,47 @@ namespace ArtonitRestApi.Models
 
         [DatabaseName("TABNUM")]
         public string TabNum { get; set; }
+    }
+
+    public class People : PeopleAdd
+    {
+
+        [DatabaseName("ID_PEP")]
+        public int? Id { get; set; }
+
+        [DatabaseName("ID_DB")]
+        public int? IdDb { get; set; }
+
+        [DatabaseName("ID_ORG")]
+        public int? IdOrg { get; set; }
+
+        public void InitializeFromPeopleAdd(PeopleAdd peopleAdd)
+        {
+            Surname = peopleAdd.Surname;
+            Name = peopleAdd.Name;
+            Patronymic = peopleAdd.Patronymic;
+            DateBirth = peopleAdd.DateBirth;
+            PlaceLife = peopleAdd.PlaceLife;
+            PlaceReg = peopleAdd.PlaceReg;
+            PhoneHome = peopleAdd.PhoneHome;
+            PhoneCellular = peopleAdd.PhoneCellular;
+            PhoneWork = peopleAdd.PhoneWork;
+            NumDoc = peopleAdd.NumDoc;
+            DateDoc = peopleAdd.DateDoc;
+            PlaceDoc = peopleAdd.PlaceDoc;
+            Photo = peopleAdd.Photo;
+            WorkStart = peopleAdd.WorkStart;
+            WorkEnd = peopleAdd.WorkEnd;
+            Active = peopleAdd.Active;
+            Flag = peopleAdd.Flag;
+            Login = peopleAdd.Login;
+            Password = peopleAdd.Password;
+            PepType = peopleAdd.PepType;
+            Post = peopleAdd.Post;
+            PlaceBirth = peopleAdd.PlaceBirth;
+            Note = peopleAdd.Note;
+            IdArea = peopleAdd.IdArea;
+            TabNum = peopleAdd.TabNum;
+        }
     }
 }

@@ -26,74 +26,59 @@ namespace ArtonitRestApi.Services
 
                     using (var dr = cmd.ExecuteReader())
                     {
-                        int row = 0;
                         while (dr.Read())
                         {
-                            row++;
-
                             var instance = (T)Activator.CreateInstance(typeof(T));
 
-                            int i = 0;
                             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                                 BindingFlags.NonPublic | BindingFlags.Public);
 
                             foreach (var property in properties)
                             {
-                                switch (property.PropertyType.Name)
+                                var databaseNameAttribute = (DatabaseNameAttribute)
+                                    Attribute.GetCustomAttribute(property, typeof(DatabaseNameAttribute));
+
+                                if (databaseNameAttribute == null) continue;
+
+                                try
                                 {
-                                    case "String":
-                                        {
-                                            property.SetValue(instance, dr.GetValue(i).ToString());
-                                            break;
-                                        }
-                                    case "Int32":
-                                        {
-                                            try
+                                    switch (property.PropertyType.Name)
+                                    {
+                                        case "String":
                                             {
-                                                property.SetValue(instance, Convert.ToInt32(dr.GetValue(i)));
+                                                property.SetValue(instance, dr[databaseNameAttribute.Value].ToString());
+                                                break;
                                             }
-                                            catch (Exception ex)
+                                        case "Int32":
                                             {
-                                                LoggerService.Log<DatabaseService>("Exception", 
-                                                    $"{ex.Message} | value = {dr.GetValue(i)}");
+                                                property.SetValue(instance,
+                                                        Convert.ToInt32(dr[databaseNameAttribute.Value]));
+                                                break;
                                             }
+                                        case "DateTime":
+                                            {
+                                                property.SetValue(instance,
+                                                       DateTime.Parse(dr[databaseNameAttribute.Value].ToString()));
+
+                                                break;
+                                            }
+                                        case "TimeSpan":
+                                            {
+                                                property.SetValue(instance,
+                                                        TimeSpan.Parse(dr[databaseNameAttribute.Value].ToString()));
+
+                                                break;
+                                            }
+                                        default:
 
                                             break;
-                                        }
-                                    case "DateTime":
-                                        {
-                                            try
-                                            {
-                                                property.SetValue(instance, DateTime.Parse(dr.GetValue(i).ToString()));
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                LoggerService.Log<DatabaseService>("Exception",
-                                                    $"{ex.Message} | value = {dr.GetValue(i)} | i = {i} row = {row}| field.Name = {property.Name}");
-                                            }
-
-                                            break;
-                                        }
-                                    case "TimeSpan":
-                                        {
-                                            try
-                                            {
-                                                property.SetValue(instance, TimeSpan.Parse(dr.GetValue(i).ToString()));
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                LoggerService.Log<DatabaseService>("Exception",
-                                                    $"{ex.Message} | value = {dr.GetValue(i)}");
-                                            }
-
-                                            break;
-                                        }
-                                    default:
-                                        property.SetValue(instance, dr.GetValue(i).ToString());
-                                        break;
+                                    }
                                 }
-
-                                i++;
+                                catch (Exception ex)
+                                {
+                                    LoggerService.Log<DatabaseService>("Exception", ex.Message);
+                                }
+                                
                             }
 
                             rows.Add(instance);
@@ -114,7 +99,7 @@ namespace ArtonitRestApi.Services
 
         public static T Get<T>(string query)
         {
-            var instance = (T)Activator.CreateInstance(typeof(T));
+            var instance = (T) Activator.CreateInstance(typeof(T));
 
             var connectionString = SettingsService.DatabaseConnectionString;
 
@@ -130,40 +115,52 @@ namespace ArtonitRestApi.Services
                     {
                         while (dr.Read())
                         {
-                            int i = 0;
                             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                                 BindingFlags.NonPublic | BindingFlags.Public);
 
                             foreach (var property in properties)
                             {
-                                switch (property.PropertyType.Name)
-                                {
-                                    case "String":
-                                        {
-                                            property.SetValue(instance, dr.GetValue(i).ToString());
-                                            break;
-                                        }
-                                    case "Int32":
-                                        {
-                                            property.SetValue(instance, Convert.ToInt32(dr.GetValue(i)));
-                                            break;
-                                        }
-                                    case "DateTime":
-                                        {
-                                            property.SetValue(instance, DateTime.Parse(dr.GetValue(i).ToString()));
-                                            break;
-                                        }
-                                    case "TimeSpan":
-                                        {
-                                            property.SetValue(instance, TimeSpan.Parse(dr.GetValue(i).ToString()));
-                                            break;
-                                        }
-                                    default:
-                                        property.SetValue(instance, dr.GetValue(i).ToString());
-                                        break;
-                                }
+                                var databaseNameAttribute = (DatabaseNameAttribute)
+                                    Attribute.GetCustomAttribute(property, typeof(DatabaseNameAttribute));
 
-                                i++;
+                                if (databaseNameAttribute == null) continue;
+
+                                try
+                                {
+                                    switch (property.PropertyType.Name)
+                                    {
+                                        case "String":
+                                            {
+                                                property.SetValue(instance,
+                                                    dr[databaseNameAttribute.Value].ToString());
+                                                break;
+                                            }
+                                        case "Int32":
+                                            {
+                                                property.SetValue(instance,
+                                                    Convert.ToInt32(dr[databaseNameAttribute.Value]));
+                                                break;
+                                            }
+                                        case "DateTime":
+                                            {
+                                                property.SetValue(instance,
+                                                    DateTime.Parse(dr[databaseNameAttribute.Value].ToString()));
+                                                break;
+                                            }
+                                        case "TimeSpan":
+                                            {
+                                                property.SetValue(instance,
+                                                    TimeSpan.Parse(dr[databaseNameAttribute.Value].ToString()));
+                                                break;
+                                            }
+                                        default:
+                                            break;
+                                    }
+                                }
+                                catch(Exception ex)
+                                {
+                                    LoggerService.Log<DatabaseService>("Exception", ex.Message);
+                                }
                             }
 
                             return instance;
@@ -193,9 +190,9 @@ namespace ArtonitRestApi.Services
                     connection.Open();
 
                     var cmd = new FbCommand(query, connection);
-                    cmd.ExecuteNonQuery();
+                    var result = cmd.ExecuteNonQuery();
 
-                    return "ok";
+                    return result.ToString();
                 }
                 catch (Exception ex)
                 {
@@ -210,27 +207,15 @@ namespace ArtonitRestApi.Services
         {
             string query = GenerateCreateQuery(instance);
 
-            var connectionString = SettingsService.DatabaseConnectionString;
-
-            using (var connection = new FbConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-
-                    var cmd = new FbCommand(query, connection);
-                    cmd.ExecuteNonQuery();
-
-                    return "ok";
-                }
-                catch (Exception ex)
-                {
-                    LoggerService.Log<DatabaseService>("Exception", $"{ex.Message}");
-                    return ex.Message;
-                }
-            }
+            return ExecuteNonQuery(query);
         }
 
+        public static string Update<T>(T instance, string condition)
+        {
+            string query = GenerateUpdateQuery(instance, condition);
+
+            return ExecuteNonQuery(query);
+        }
 
 
         public static string GenerateUpdateQuery<T>(T instance, string condition)
