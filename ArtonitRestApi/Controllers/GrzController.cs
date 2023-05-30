@@ -11,9 +11,6 @@ namespace ArtonitRestApi.Controllers
 
     public class GrzController : ApiController
     {
-        private const string queryGetCards = "select c.id_card, c.id_pep, c.timestart, c.timeend, c.note, c.status," +
-            " c.\"ACTIVE\", c.flag, c.id_cardtype from card c where c.id_cardtype=4";
-
 
         /// <summary>
         /// Получает список карточек из базы данных с возможностью фильтрации по Гос. номеру автомобиля.
@@ -21,9 +18,13 @@ namespace ArtonitRestApi.Controllers
         /// <param name="filter">Строка фильтрации по Гос. номеру автомобиля. Параметр являвется не обязательным.
         /// Если не заполнять то фильтр не будет применяться</param>
         /// <returns>Список карточек, соответствующих фильтру.</returns>
+        
         [HttpGet]
         public List<GrzModel> Getlist(string filter = "")
         {
+            var queryGetCards = "select c.id_card, c.id_pep, c.timestart, c.timeend, c.note, c.status, " +
+            "c.\"ACTIVE\", c.flag, c.id_cardtype from card c where c.id_cardtype=4";
+
             if (filter.Length > 0)
             {
                 return DatabaseService.GetList<GrzModel>(queryGetCards)
@@ -33,6 +34,7 @@ namespace ArtonitRestApi.Controllers
             return DatabaseService.GetList<GrzModel>(queryGetCards);
         }
 
+
         /// <summary>
         /// Получить список событий по гос. номеру автомобиля и диапазону дат.
         /// </summary>
@@ -40,6 +42,7 @@ namespace ArtonitRestApi.Controllers
         /// <param name="dateFrom">Дата "с". Значение по умолчанию: -3 дня от текущей даты.</param>
         /// <param name="dateTo">Дата "по". Значение по умолчанию: текущая дата.</param>
         /// <returns>Список событий.</returns>
+        
         [HttpGet]
         public List<EventModel> EventInfo(
             string grz,

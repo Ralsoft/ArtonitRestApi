@@ -11,6 +11,7 @@ namespace ArtonitRestApi.Controllers
         /// Возвращает настройки программы
         /// </summary>
         /// <returns>Текущие настройки программы в виде json.</returns>
+        
         [HttpGet]
         public SettingsService Info() => new SettingsService();
 
@@ -19,6 +20,7 @@ namespace ArtonitRestApi.Controllers
         /// Возвращает текущее время
         /// </summary>
         /// <returns>Текущие время в UTC.</returns>
+        
         [HttpGet]
         public DateTime ServerTime() => DateTime.UtcNow;
 
@@ -28,6 +30,7 @@ namespace ArtonitRestApi.Controllers
         /// </summary>
         /// <param name="key">строка, которая будет возвращена</param>
         /// <returns>параметр key</returns>
+        
         [HttpGet]
         public string GetString(string key = "default") => key; 
     }

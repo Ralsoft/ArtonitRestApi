@@ -1,11 +1,8 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Services;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Wordprocessing;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Security.Claims;
 using System.Web.Http;
 
 namespace ArtonitRestApi.Controllers
@@ -28,20 +25,17 @@ namespace ArtonitRestApi.Controllers
         }
 
 
-
         /// <summary>
         /// Добавить гараж на указанную парковку
         /// </summary>
         /// <returns>Результат вставки в формате json</returns>
 
         [HttpPost]
-
-        public HttpResponseMessage addParking([FromBody] ParkingModel body)
+        public HttpResponseMessage AddParking([FromBody] ParkingModel body)
         {
-           // return Request.CreateResponse(HttpStatusCode.OK);
             return Request.CreateResponse(HttpStatusCode.NotImplemented);
-
         }
+
 
         /// <summary>
         /// Удаляет гараж по указанному id
@@ -49,30 +43,33 @@ namespace ArtonitRestApi.Controllers
         /// <returns>Результат удаления 0 -  успешно, 1 - ошибка</returns>
 
         [HttpDelete]
-        public HttpResponseMessage delParking()
+        public HttpResponseMessage DelParking()
         { 
             //DatabaseService.GetList<ParkingModel>("select * from hl_parking");
             return Request.CreateResponse(HttpStatusCode.NotImplemented);
         }
+
+
         /// <summary>
         /// Меняет указанные свойства для указаннома гаража
         /// </summary>
         /// <returns></returns>
 
         [HttpPatch]
-        public HttpResponseMessage updateParking()
+        public HttpResponseMessage UpdateParking()
         {
             //DatabaseService.GetList<ParkingModel>("select * from HL_ParkingNAME");
             return Request.CreateResponse(HttpStatusCode.NotImplemented);
         }
 
-            /// <summary>
-            /// Получить список машиномест для указанного гаража
-            /// </summary>
-            /// <param name="id"></param>
-            /// <returns></returns>
 
-          [HttpGet]
+        /// <summary>
+        /// Получить список машиномест для указанного гаража
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        [HttpGet]
         public HttpResponseMessage ParkingGetById(string id)
         {
           var query = $@"select * from hl_Parking hlg
@@ -80,12 +77,5 @@ namespace ArtonitRestApi.Controllers
            // return DatabaseService.Get<ParkingModel>(query);
             return Request.CreateResponse(HttpStatusCode.NotImplemented);
         }
-
-
-
-
     }
-
-
-
 }

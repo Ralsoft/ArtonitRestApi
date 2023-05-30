@@ -30,6 +30,7 @@ namespace ArtonitRestApi.Controllers
             return DatabaseService.Get<People>(query);
         }                   
 
+
         [HttpGet]
         public People UserGetByCard(string card, int? cardType = -1)
         {
@@ -61,9 +62,9 @@ namespace ArtonitRestApi.Controllers
                     og on p.id_org=og.id_org where c.id_card containing '{card}' and c.id_cardtype={cardType};";
             }
 
-
             return DatabaseService.Get<People>(query);
         }
+
 
         [HttpGet]
         public List<People> UserListGet()
@@ -81,6 +82,7 @@ namespace ArtonitRestApi.Controllers
 
             return DatabaseService.GetList<People>(query);
         }
+
 
         [HttpPost]
         public HttpResponseMessage UserAdd([FromBody] People body)
@@ -125,6 +127,7 @@ namespace ArtonitRestApi.Controllers
             }
         }
 
+
         [HttpPatch]
         public HttpResponseMessage UserUpdate([FromBody] People body, int id)
         {
@@ -159,7 +162,6 @@ namespace ArtonitRestApi.Controllers
             }
         }  
         
-    
 
         [HttpDelete]
         public HttpResponseMessage UserDelete(int id)

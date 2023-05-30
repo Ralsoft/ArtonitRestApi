@@ -10,7 +10,6 @@ namespace ArtonitRestApi.Controllers
     public class SSAccessUserController : ApiController
     {
         
-        
         [HttpGet]
         public List<Ss_accessuser> UserAccessGet()
         {
@@ -19,6 +18,7 @@ namespace ArtonitRestApi.Controllers
             return DatabaseService.GetList<Ss_accessuser>(query);
         } 
         
+
         [HttpGet]
         public Ss_accessuser UserAccessGet(string id)
         {
@@ -45,6 +45,7 @@ namespace ArtonitRestApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, err);
             }
         }
+
       
         [HttpDelete]
         public HttpResponseMessage UserAccessDel(int userId, int accessnameId)

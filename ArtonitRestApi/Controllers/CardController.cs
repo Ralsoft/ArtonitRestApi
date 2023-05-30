@@ -1,13 +1,9 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace ArtonitRestApi.Controllers
@@ -116,6 +112,7 @@ namespace ArtonitRestApi.Controllers
             }
         }
 
+
         [HttpPost]
         public HttpResponseMessage CardUpdateQuery([FromBody] CardModel body, string OldCardValue)
         {
@@ -145,6 +142,5 @@ namespace ArtonitRestApi.Controllers
         {
 
         }
-
     }
 }
