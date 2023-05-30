@@ -12,6 +12,7 @@ namespace ArtonitRestApi.Services
     {
         public static List<T> GetList<T>(string query)
         {
+            LoggerService.Log<DatabaseService>("Info", query);
             var rows = new List<T>();
 
             var connectionString = SettingsService.DatabaseConnectionString;
@@ -99,6 +100,7 @@ namespace ArtonitRestApi.Services
 
         public static T Get<T>(string query)
         {
+            LoggerService.Log<DatabaseService>("Info", query);
             var instance = (T) Activator.CreateInstance(typeof(T));
 
             var connectionString = SettingsService.DatabaseConnectionString;
@@ -181,6 +183,8 @@ namespace ArtonitRestApi.Services
 
         public static string ExecuteNonQuery(string query)
         {
+            LoggerService.Log<DatabaseService>("Info", query);
+
             var connectionString = SettingsService.DatabaseConnectionString;
 
             using (var connection = new FbConnection(connectionString))
