@@ -206,9 +206,13 @@ namespace ArtonitRestApi.Services
         public static string Create<T>(T instance)
         {
             string query = GenerateCreateQuery(instance);
+            LoggerService.Log<DatabaseService>("DEBUG",query);
 
             return ExecuteNonQuery(query);
         }
+
+
+
 
         public static string Update<T>(T instance, string condition)
         {

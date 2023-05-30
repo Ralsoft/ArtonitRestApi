@@ -1,5 +1,7 @@
 ﻿using ArtonitRestApi.Models;
+using ArtonitRestApi.Repositories;
 using ArtonitRestApi.Services;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -11,29 +13,32 @@ namespace ArtonitRestApi.Controllers
     {
 
         /// <summary>
-        /// Получает список гаражей из базы данных по запросу select * from HL_GARAGENAME
+        /// Получает список гаражей
         /// </summary>
         /// <returns>Список мест в формате json</returns>
 
         [HttpGet]
         public List<GarageModel> GetGarageList()
         {
-          var query = $@"select hlgn.id, hlgn.name, hlgn.created, hlgn.NotCount from HL_GARAGENAME hlgn";
-            return DatabaseService.GetList<GarageModel>(query);
-           
+
+            return GarageRepository.GetList();
+
         }
 
 
         /// <summary>
-        /// Добавить гараж на указанную парковку
+        /// Добавить гараж.
         /// </summary>
         /// <returns>Результат вставки в формате json</returns>
 
         [HttpPost]
-        public HttpResponseMessage AddGarage([FromBody] GarageModel body)
+        public HttpResponseMessage AddGarage([FromBody] GarageModelBase body)
         {
-            //return Request.CreateResponse(HttpStatusCode.OK);
-            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+            var result = GarageRepository.Add(body);
+            if (result > 0)
+                return Request.CreateResponse(HttpStatusCode.OK, result);
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest);
         }
 
 

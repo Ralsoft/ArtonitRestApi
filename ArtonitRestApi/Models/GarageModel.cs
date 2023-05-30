@@ -1,15 +1,56 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using System;
 
 namespace ArtonitRestApi.Models
 {
-    public class GarageModel
-    {      
-        public int Id { get; set; }
-  
-        public string Name { get; set; } 
+    /// <summary>
+    /// базовый набор данных о гараже: название и код дивизиона.
+    /// </summary>
+    [DatabaseName("HL_GARAGENAME")]
+    public class GarageModelBase
+    {
+        [DatabaseName("NAME")]
+        public string Name { get; set; }
 
+        [DatabaseName("DIV_CODE")]
+        public string Div_code { get; set; }
+    }
+
+    
+    /// <summary>
+    /// набор данных для регистрации. При вставке данных значение ID берется из генератора, и это же значение передается в return после выполнения команды добавления гаража.
+    /// </summary>
+    public class GarageModelAdd : GarageModelBase
+    {
+        [DatabaseName("ID")]
+        public int? Id { get; set; }
+        public void InitializeFromGarageModelBase(GarageModelBase garageModelBase)
+        {
+            Name = garageModelBase.Name;
+            Div_code = garageModelBase.Div_code;
+        }
+
+    }
+
+   /// <summary>
+   /// полный набор данных о гараже.
+   /// </summary>
+    public class GarageModel : GarageModelBase
+    {
+        [DatabaseName("ID")]
+        public int Id { get; set; }
+
+        [DatabaseName("CREATED")]
         public DateTime DateStart { get; set; }
 
+        [DatabaseName("NOT_COUNT")]
         public int NotCount { get; set; }
+
+        
+        public void InitializeFromGarageModelBase(GarageModelBase garageModelBase)
+        {
+            Name = garageModelBase.Name;
+            Div_code = garageModelBase.Div_code;
+        }
     }
 }
