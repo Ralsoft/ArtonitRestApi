@@ -228,14 +228,18 @@ namespace ArtonitRestApi.Services
 
         public static string GenerateUpdateQuery<T>(T instance, string condition)
         {
-            var classNameAttribute = (DatabaseNameAttribute)
-                        Attribute.GetCustomAttribute(typeof(T), typeof(DatabaseNameAttribute));
             string query;
 
-            if(classNameAttribute != null)
-                query = $"update {classNameAttribute.Value} set ";
+            var attribute = Attribute.GetCustomAttribute(typeof(T), typeof(DatabaseNameAttribute));
+
+            if (attribute is DatabaseNameAttribute databaseName)
+            {
+                query = $"update {databaseName.Value} set ";
+            }
             else
+            {
                 query = $"update {typeof(T).Name} set ";
+            }
 
             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                BindingFlags.NonPublic | BindingFlags.Public);
@@ -326,7 +330,17 @@ namespace ArtonitRestApi.Services
 
         public static string GenerateCreateQuery<T>(T instance)
         {
-            string query = $"insert into {typeof(T).Name} (";
+            string query;
+
+            var attribute = Attribute.GetCustomAttribute(typeof(T), typeof(DatabaseNameAttribute));
+            if (attribute is DatabaseNameAttribute databaseName)
+            {
+                query = $"insert into {databaseName.Value} (";
+            }
+            else
+            {
+                query = $"insert into {typeof(T).Name} (";
+            }
 
             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                 BindingFlags.NonPublic | BindingFlags.Public);

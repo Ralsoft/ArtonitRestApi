@@ -16,10 +16,12 @@ namespace ArtonitRestApi.Models
         public string Div_code { get; set; }
     }
 
-    
+
     /// <summary>
     /// набор данных для регистрации. При вставке данных значение ID берется из генератора, и это же значение передается в return после выполнения команды добавления гаража.
     /// </summary>
+
+    [DatabaseName("HL_GARAGENAME")]
     public class GarageModelAdd : GarageModelBase
     {
         [DatabaseName("ID")]

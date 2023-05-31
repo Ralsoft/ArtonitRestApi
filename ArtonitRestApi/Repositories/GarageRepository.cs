@@ -24,6 +24,7 @@ namespace ArtonitRestApi.Repositories
                 .Get<RDBDatabase>("select GEN_ID (GEN_HL_GARAGENAME_ID, 1) from RDB$DATABASE");
 
             var garage = new GarageModelAdd();
+
             garage.InitializeFromGarageModelBase(garageModelBase);
 
             garage.Id = rdbDatabase.Id;
