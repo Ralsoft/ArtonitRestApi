@@ -20,7 +20,7 @@
         [DatabaseName("status")]
         public string Status { get; set; }
 
-        [DatabaseName("\"ACTIVE\"")]
+        [DatabaseName("ACTIVE")]
         public string Active { get; set; }
 
         [DatabaseName("flag")]
