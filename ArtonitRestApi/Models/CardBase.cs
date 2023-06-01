@@ -1,10 +1,11 @@
 ﻿using ArtonitRestApi.Annotation;
+using DocumentFormat.OpenXml.EMMA;
 using System;
 
 namespace ArtonitRestApi.Models
 {
     [DatabaseName("Card")]
-    public class CardModel
+    public class CardBase
     {
         [DatabaseName("ID_CARDTYPE")]
         public int? CardType { get; set; }
@@ -23,18 +24,22 @@ namespace ArtonitRestApi.Models
         public DateTime DateStop { get; set; }
     }
 
-    public class Card : CardModel
+    [DatabaseName("Card")]
+    public class CardAdd : CardBase
     {
+        
+        public int CardId { get; set; }
+
         [DatabaseName("ID_PEP")]
         public int UserId { get; set; }
 
-        public Card(CardModel model)
+        public void InitializeFromCardBase(CardBase model)
         {
             CardValue = model.CardValue;
             CardType = model.CardType;
             Active = model.Active;
             DateStart = model.DateStart;
-            DateStop = model.DateStop;  
+            DateStop = model.DateStop;
         }
     }
 }

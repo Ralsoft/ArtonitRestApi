@@ -312,14 +312,14 @@
     <Compile Include="Annotation\DatabaseNameAttribute.cs" />
     <Compile Include="Models\ParkingModel.cs" />
     <Compile Include="Models\GarageModel.cs" />
-    <Compile Include="Models\CardModel.cs" />
+    <Compile Include="Models\CardBase.cs" />
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Models\GrzModel.cs" />
     <Compile Include="Models\MyClaimTypes.cs" />
     <Compile Include="Models\PlaceModel.cs" />
     <Compile Include="Models\RDBDatabase.cs" />
     <Compile Include="Models\RightsVerificationModel.cs" />
-    <Compile Include="Models\Ss_accessuser.cs" />
+    <Compile Include="Models\SSAccessuserBase.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\PeopleModel.cs" />
     <Compile Include="ProjectInstaller.cs">
@@ -328,8 +328,11 @@
     <Compile Include="ProjectInstaller.Designer.cs">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\CardRepository.cs" />
     <Compile Include="Repositories\GarageRepository.cs" />
+    <Compile Include="Repositories\GrzRepository.cs" />
     <Compile Include="Repositories\PeopleRepository.cs" />
+    <Compile Include="Repositories\SSAccessUserRepository.cs" />
     <Compile Include="Service1.cs">
       <SubType>Component</SubType>
     </Compile>

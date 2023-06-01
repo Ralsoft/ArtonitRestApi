@@ -1,5 +1,7 @@
 ﻿using ArtonitRestApi.Models;
+using ArtonitRestApi.Repositories;
 using ArtonitRestApi.Services;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -9,37 +11,27 @@ namespace ArtonitRestApi.Controllers
 {
     public class SSAccessUserController : ApiController
     {
-        
-        [HttpGet]
-        public List<Ss_accessuser> UserAccessGet()
-        {
-            var query = $@"select ID_ACCESSUSER, ID_DB, ID_PEP, ID_ACCESSNAME from ss_accessuser";
 
-            return DatabaseService.GetList<Ss_accessuser>(query);
-        } 
+        [HttpGet]
+        public List<SSAccessuserAdd> UserAccessGet() => SSAccessUserRepository.GetAll(); 
         
 
         [HttpGet]
-        public Ss_accessuser UserAccessGet(string id)
-        {
-            var query = $@"select ID_ACCESSUSER, ID_DB, ID_PEP, ID_ACCESSNAME from ss_accessuser where ID_ACCESSUSER={id}";
-
-            return DatabaseService.Get<Ss_accessuser>(query);
-        }
+        public SSAccessuserAdd UserAccessGet(string id) => SSAccessUserRepository.GetById(id);
 
 
         [HttpPost]
-        public HttpResponseMessage UserAccessAdd([FromBody] Ss_accessuser body)
+        public HttpResponseMessage UserAccessAdd([FromBody] SSAccessuserBase body)
         {
-            body.IdDb = 1;
+          
+            var result = SSAccessUserRepository.Add(body);
 
-            var result = DatabaseService.Create(body);
-
-            if (result == "ok")
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK);
+                var resultInt = Convert.ToInt32(result);
+                return Request.CreateResponse(HttpStatusCode.OK, resultInt);
             }
-            else
+            catch (Exception)
             {
                 HttpError err = new HttpError(result);
                 return Request.CreateResponse(HttpStatusCode.BadRequest, err);
@@ -50,15 +42,15 @@ namespace ArtonitRestApi.Controllers
         [HttpDelete]
         public HttpResponseMessage UserAccessDel(int userId, int accessnameId)
         {
-            var query = $"delete from ss_accessuser ssa where ssa.id_pep = {userId} and ssa.id_accessname={accessnameId}";
 
-            var result = DatabaseService.ExecuteNonQuery(query);
+            var result = SSAccessUserRepository.Delete(userId, accessnameId);
 
-            if (result == "ok")
+            try
             {
-                return Request.CreateResponse(HttpStatusCode.OK);
+                var resultInt = Convert.ToInt32(result);
+                return Request.CreateResponse(HttpStatusCode.OK, resultInt);
             }
-            else
+            catch (Exception)
             {
                 HttpError err = new HttpError(result);
                 return Request.CreateResponse(HttpStatusCode.BadRequest, err);

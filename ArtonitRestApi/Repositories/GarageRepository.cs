@@ -1,8 +1,6 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Services;
-using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 
 namespace ArtonitRestApi.Repositories
 {
@@ -10,12 +8,9 @@ namespace ArtonitRestApi.Repositories
     {
         public static List<GarageModel> GetList()
         {
-         
             var query = "select hlgn.id, hlgn.name, hlgn.created, hlgn.not_count, hlgn.div_code from HL_GARAGENAME hlgn";
 
             return DatabaseService.GetList<GarageModel>(query);
-            
-
         }
 
         public static int Add(GarageModelBase garageModelBase)
@@ -38,7 +33,5 @@ namespace ArtonitRestApi.Repositories
 
             return 0;
         }
-
-
     }
 }

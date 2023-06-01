@@ -1,4 +1,5 @@
 ﻿using ArtonitRestApi.Models;
+using ArtonitRestApi.Repositories;
 using ArtonitRestApi.Services;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
@@ -22,16 +23,7 @@ namespace ArtonitRestApi.Controllers
         [HttpGet]
         public List<GrzModel> Getlist(string filter = "")
         {
-            var queryGetCards = "select c.id_card, c.id_pep, c.timestart, c.timeend, c.note, c.status, " +
-            "c.\"ACTIVE\", c.flag, c.id_cardtype from card c where c.id_cardtype=4";
-
-            if (filter.Length > 0)
-            {
-                return DatabaseService.GetList<GrzModel>(queryGetCards)
-                    .Where(x => x.IdCard.Contains(filter)).ToList();
-            }
-
-            return DatabaseService.GetList<GrzModel>(queryGetCards);
+            return GrzRepository.GetAll(filter);
         }
 
 
@@ -49,18 +41,7 @@ namespace ArtonitRestApi.Controllers
             [SwaggerParameter(Description = "Значение по умолчанию: -3 дня от текущей даты")] DateTime? dateFrom = null,
             [SwaggerParameter(Description = "Значение по умолчанию: текущей даты")] DateTime? dateTo = null)
         {
-            if (dateFrom == null) dateFrom = DateTime.Now.AddDays(-3);
-            if (dateTo == null) dateTo = DateTime.Now;
-
-            string query = "select e.event_code, e.event_time, e.created, hlp.is_enter, hlp.id_parking from hl_events e " +
-                "join hl_param hlp on hlp.id_dev=e.id_gate " +
-                $"where e.grz='{grz}' " +
-                "and e.event_code in (46, 50, 65, 81) " +
-                $"and e.event_time>'{dateFrom}' " +
-                $"and e.event_time<'{dateTo}' " +
-                "order by e.event_time";
-
-            return DatabaseService.GetList<EventModel>(query);
+            return GrzRepository.EventInfo(grz, dateFrom, dateTo);
         }
     }
 }

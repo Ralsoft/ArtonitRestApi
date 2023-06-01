@@ -13,7 +13,7 @@ namespace ArtonitRestApi.Models
         public string Name { get; set; }
 
         [DatabaseName("DIV_CODE")]
-        public string Div_code { get; set; }
+        public string DivCode { get; set; }
     }
 
 
@@ -29,7 +29,7 @@ namespace ArtonitRestApi.Models
         public void InitializeFromGarageModelBase(GarageModelBase garageModelBase)
         {
             Name = garageModelBase.Name;
-            Div_code = garageModelBase.Div_code;
+            DivCode = garageModelBase.DivCode;
         }
 
     }
@@ -52,7 +52,7 @@ namespace ArtonitRestApi.Models
         public void InitializeFromGarageModelBase(GarageModelBase garageModelBase)
         {
             Name = garageModelBase.Name;
-            Div_code = garageModelBase.Div_code;
+            DivCode = garageModelBase.DivCode;
         }
     }
 }

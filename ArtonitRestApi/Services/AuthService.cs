@@ -1,5 +1,5 @@
 ﻿using ArtonitRestApi.Models;
-using DocumentFormat.OpenXml.Office2010.Excel;
+using System;
 using System.Security.Claims;
 
 namespace ArtonitRestApi.Services
@@ -28,9 +28,7 @@ namespace ArtonitRestApi.Services
 
             var verify = DatabaseService.Get<RightsVerificationModel>(query);
 
-            if (verify.Id != 0) return true;
-
-            return false;
+            return verify.Id != 0;
         }
 
         public static bool CheckRightUserUpdateDelete(int id)
@@ -44,9 +42,22 @@ namespace ArtonitRestApi.Services
 
             var verify = DatabaseService.Get<RightsVerificationModel>(queryVerify);
 
-            if (verify.Id != 0) return true;
+            return verify.Id != 0;
+        }
 
-            return false;
+        public static bool CheckRightCardAdd(int userId)
+        {
+            var userIdentity = ClaimsPrincipal.Current;
+            var idOrgCtrl = userIdentity?.FindFirst(MyClaimTypes.IdOrgCtrl)?.Value;
+            var idPep = userIdentity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var queryVerify = $@"select p.id_pep from people p 
+                join organization_getchild (1, {idOrgCtrl}) og on og.id_org=p.id_org
+                where p.id_pep={userId}";
+
+            var verify = DatabaseService.Get<RightsVerificationModel>(queryVerify);
+
+            return verify.Id == Convert.ToInt32(idPep);
         }
     }
 }
