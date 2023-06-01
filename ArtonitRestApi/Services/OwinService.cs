@@ -9,7 +9,7 @@ namespace ArtonitRestApi.Services
 
         public void Start()
         {
-            _webApp = WebApp.Start<StartOwin>(SettingsService.Uri);
+            _webApp = WebApp.Start<StartOwin>(SettingsService.Url);
         }
 
         public void Stop()
