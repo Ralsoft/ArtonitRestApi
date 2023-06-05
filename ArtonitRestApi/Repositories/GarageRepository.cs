@@ -13,14 +13,12 @@ namespace ArtonitRestApi.Repositories
             return DatabaseService.GetList<GarageModel>(query);
         }
 
-        public static int Add(GarageModelBase garageModelBase)
+        public static int Add(GarageModel garageModelBase)
         {
             var rdbDatabase = DatabaseService
                 .Get<RDBDatabase>("select GEN_ID (GEN_HL_GARAGENAME_ID, 1) from RDB$DATABASE");
 
-            var garage = new GarageModelAdd();
-
-            garage.InitializeFromGarageModelBase(garageModelBase);
+            var garage = new GarageModel();
 
             garage.Id = rdbDatabase.Id;
            

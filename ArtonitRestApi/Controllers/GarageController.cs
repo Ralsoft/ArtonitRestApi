@@ -32,7 +32,7 @@ namespace ArtonitRestApi.Controllers
         /// <returns>Результат вставки в формате json</returns>
 
         [HttpPost]
-        public HttpResponseMessage AddGarage([FromBody] GarageModelBase body)
+        public HttpResponseMessage AddGarage([FromBody] GarageModel body)
         {
             var result = GarageRepository.Add(body);
             if (result > 0)
