@@ -10,7 +10,7 @@ namespace ArtonitRestApi.Repositories
 {
     public class GrzRepository
     {
-        public static List<GrzModel> GetAll(string filter = "")
+        public static List<GrzModel> GetAll(string filter)
         {
             var queryGetCards = "select c.id_card, c.id_pep, c.timestart, c.timeend, c.note, c.status, " +
             "c.\"ACTIVE\", c.flag, c.id_cardtype from card c where c.id_cardtype=4";

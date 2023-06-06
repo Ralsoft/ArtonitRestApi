@@ -12,7 +12,7 @@ namespace ArtonitRestApi.Services
     {
         public static List<T> GetList<T>(string query)
         {
-            query = query.ToLower();
+            query = query.ToUpper();
 
             LoggerService.Log<DatabaseService>("Info", query);
             var rows = new List<T>();
@@ -34,7 +34,7 @@ namespace ArtonitRestApi.Services
                             var instance = (T) Activator.CreateInstance(typeof(T));
 
                             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
-                                BindingFlags.NonPublic | BindingFlags.Public);
+                                BindingFlags.NonPublic | BindingFlags.Public);//СВОЙСТВА МОДЕЛИ
 
                             foreach (var property in properties)
                             {
@@ -43,32 +43,33 @@ namespace ArtonitRestApi.Services
 
                                 if (databaseNameAttribute == null) continue;
 
+                                LoggerService.Log<DatabaseService>("INFO", $"{property.PropertyType.Name} | V: {dr[databaseNameAttribute.Value.ToUpper()].ToString()}");
                                 try
                                 {
                                     switch (property.PropertyType.Name)
                                     {
                                         case "String":
                                             {
-                                                property.SetValue(instance, dr[databaseNameAttribute.Value.ToLower()].ToString());
+                                                property.SetValue(instance, dr[databaseNameAttribute.Value.ToUpper()].ToString());
                                                 break;
                                             }
                                         case "Int32":
                                             {
                                                 property.SetValue(instance,
-                                                        Convert.ToInt32(dr[databaseNameAttribute.Value.ToLower()]));
+                                                        Convert.ToInt32(dr[databaseNameAttribute.Value.ToUpper()]));
                                                 break;
                                             }
                                         case "DateTime":
                                             {
                                                 property.SetValue(instance,
-                                                       DateTime.Parse(dr[databaseNameAttribute.Value.ToLower()].ToString()));
+                                                       DateTime.Parse(dr[databaseNameAttribute.Value.ToUpper()].ToString()));
 
                                                 break;
                                             }
                                         case "TimeSpan":
                                             {
                                                 property.SetValue(instance,
-                                                        TimeSpan.Parse(dr[databaseNameAttribute.Value.ToLower()].ToString()));
+                                                        TimeSpan.Parse(dr[databaseNameAttribute.Value.ToUpper()].ToString()));
 
                                                 break;
                                             }
@@ -102,7 +103,7 @@ namespace ArtonitRestApi.Services
 
         public static T Get<T>(string query)
         {
-            query = query.ToLower();
+            query = query.ToUpper();
 
             LoggerService.Log<DatabaseService>("Info", query);
             var instance = (T) Activator.CreateInstance(typeof(T));
@@ -138,25 +139,25 @@ namespace ArtonitRestApi.Services
                                         case "String":
                                             {
                                                 property.SetValue(instance,
-                                                    dr[databaseNameAttribute.Value.ToLower()].ToString());
+                                                    dr[databaseNameAttribute.Value.ToUpper()].ToString());
                                                 break;
                                             }
                                         case "Int32":
                                             {
                                                 property.SetValue(instance,
-                                                    Convert.ToInt32(dr[databaseNameAttribute.Value.ToLower()]));
+                                                    Convert.ToInt32(dr[databaseNameAttribute.Value.ToUpper()]));
                                                 break;
                                             }
                                         case "DateTime":
                                             {
                                                 property.SetValue(instance,
-                                                    DateTime.Parse(dr[databaseNameAttribute.Value.ToLower()].ToString()));
+                                                    DateTime.Parse(dr[databaseNameAttribute.Value.ToUpper()].ToString()));
                                                 break;
                                             }
                                         case "TimeSpan":
                                             {
                                                 property.SetValue(instance,
-                                                    TimeSpan.Parse(dr[databaseNameAttribute.Value.ToLower()].ToString()));
+                                                    TimeSpan.Parse(dr[databaseNameAttribute.Value.ToUpper()].ToString()));
                                                 break;
                                             }
                                         default:
@@ -187,7 +188,7 @@ namespace ArtonitRestApi.Services
 
         public static string ExecuteNonQuery(string query)
         {
-            query = query.ToLower();
+            query = query.ToUpper();
 
             LoggerService.Log<DatabaseService>("Info", query);
 
@@ -269,9 +270,9 @@ namespace ArtonitRestApi.Services
                             case "String":
                                 {
                                     if (systemWord != null)
-                                        query += $@"""{databaseNameAttribute.Value.ToLower()}"" = ";
+                                        query += $@"""{databaseNameAttribute.Value.ToUpper()}"" = ";
                                     else
-                                        query += databaseNameAttribute.Value.ToLower() + " = ";
+                                        query += databaseNameAttribute.Value.ToUpper() + " = ";
 
                                     query += $"'{value}', ";
                                     break;
@@ -281,9 +282,9 @@ namespace ArtonitRestApi.Services
                                     var valueInt = Convert.ToInt32(value);
                                    
                                     if (systemWord != null)
-                                        query += $@"""{databaseNameAttribute.Value.ToLower()}"" = ";
+                                        query += $@"""{databaseNameAttribute.Value.ToUpper()}"" = ";
                                     else
-                                        query += databaseNameAttribute.Value.ToLower() + " = ";
+                                        query += databaseNameAttribute.Value.ToUpper() + " = ";
 
                                     query += value + ", ";
                                     break;
@@ -296,9 +297,9 @@ namespace ArtonitRestApi.Services
                                     if (output == "01.01.0001") continue;
 
                                     if (systemWord != null)
-                                        query += $@"""{databaseNameAttribute.Value.ToLower()}"" = ";
+                                        query += $@"""{databaseNameAttribute.Value.ToUpper()}"" = ";
                                     else
-                                        query += databaseNameAttribute.Value.ToLower() + " = ";
+                                        query += databaseNameAttribute.Value.ToUpper() + " = ";
 
                                     query += $"'{output}', ";
                                     break;
@@ -308,9 +309,9 @@ namespace ArtonitRestApi.Services
                                     if (value.ToString() == "00:00:00") continue;
 
                                     if (systemWord != null)
-                                        query += $@"""{databaseNameAttribute.Value.ToLower()}"" = ";
+                                        query += $@"""{databaseNameAttribute.Value.ToUpper()}"" = ";
                                     else
-                                        query += databaseNameAttribute.Value.ToLower() + " = ";
+                                        query += databaseNameAttribute.Value.ToUpper() + " = ";
 
                                     query += $"'{value}', ";
 
@@ -368,11 +369,11 @@ namespace ArtonitRestApi.Services
 
                     if(systemWord != null)
                     {
-                        query += $@"""{databaseNameAttribute.Value.ToLower()}"", ";
+                        query += $@"""{databaseNameAttribute.Value.ToUpper()}"", ";
                     }
                     else
                     {
-                        query += databaseNameAttribute.Value.ToLower() + ", ";
+                        query += databaseNameAttribute.Value.ToUpper() + ", ";
                     }
                 }
             }
@@ -429,6 +430,7 @@ namespace ArtonitRestApi.Services
 
             query += ");";
 
+            LoggerService.Log<DatabaseService>("INFO", query);
             return query;
         }
     }

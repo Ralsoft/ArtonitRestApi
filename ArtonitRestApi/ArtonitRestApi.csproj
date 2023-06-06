@@ -331,6 +331,7 @@
     <Compile Include="Repositories\CardRepository.cs" />
     <Compile Include="Repositories\GarageRepository.cs" />
     <Compile Include="Repositories\GrzRepository.cs" />
+    <Compile Include="Repositories\ParkingRepository.cs" />
     <Compile Include="Repositories\PeopleRepository.cs" />
     <Compile Include="Repositories\SSAccessUserRepository.cs" />
     <Compile Include="Service1.cs">

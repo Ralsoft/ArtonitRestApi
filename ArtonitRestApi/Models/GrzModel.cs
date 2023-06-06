@@ -2,7 +2,7 @@
 {
     public class GrzModel
     {
-        [DatabaseName("id_card")]
+        [DatabaseName("ID_CARD")]
         public string IdCard { get; set; }
 
         [DatabaseName("id_pep")]

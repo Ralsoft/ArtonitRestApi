@@ -1,5 +1,8 @@
 ﻿using ArtonitRestApi.Models;
+using ArtonitRestApi.Repositories;
 using ArtonitRestApi.Services;
+using DocumentFormat.OpenXml.Office2010.Excel;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -16,12 +19,10 @@ namespace ArtonitRestApi.Controllers
         /// <returns>Список мест в формате json</returns>
 
         [HttpGet]
-        public List<ParkingModel> GetParkingList()
+        public HttpResponseMessage GetParkingList()
         {
-            var query = $@"select p.id, p.name, p.enabled, p.created, p.parent from hl_parking p
-            where p.parent=14";
-            return DatabaseService.GetList<ParkingModel>(query);
-
+            var list = ParkingRepository.GetAll();
+            return Request.CreateResponse(HttpStatusCode.OK, list);
         }
 
 
@@ -31,9 +32,17 @@ namespace ArtonitRestApi.Controllers
         /// <returns>Результат вставки в формате json</returns>
 
         [HttpPost]
-        public HttpResponseMessage AddParking([FromBody] ParkingModel body)
+        public HttpResponseMessage AddParking([FromBody] ParkingModelBase body)
         {
-            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+            string result = "";
+            if (body.Id_div == null || body.Name == null)
+            {
+                result = "37 неполные данные";
+                return Request.CreateResponse(HttpStatusCode.BadRequest, result);
+            }
+
+            result = ParkingRepository.Add(body);
+            return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
 
@@ -56,10 +65,20 @@ namespace ArtonitRestApi.Controllers
         /// <returns></returns>
 
         [HttpPatch]
-        public HttpResponseMessage UpdateParking()
+        public HttpResponseMessage UpdateParking(ParkingModel body, string id_code)
         {
-            //DatabaseService.GetList<ParkingModel>("select * from HL_ParkingNAME");
-            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+
+            string result = "";
+            /*
+            if (body.Id_div == null || body.Name == null )
+            {
+                result = "37 неполные данные";
+                return Request.CreateResponse(HttpStatusCode.BadRequest, result);
+            }
+            */
+
+            result = ParkingRepository.Update(body, id_code);
+            return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
 

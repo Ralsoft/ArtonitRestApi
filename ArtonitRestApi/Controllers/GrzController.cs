@@ -5,6 +5,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace ArtonitRestApi.Controllers
@@ -21,9 +23,10 @@ namespace ArtonitRestApi.Controllers
         /// <returns>Список карточек, соответствующих фильтру.</returns>
         
         [HttpGet]
-        public List<GrzModel> Getlist(string filter = "")
+        public HttpResponseMessage Getlist(string filter = "")
         {
-            return GrzRepository.GetAll(filter);
+            var result = GrzRepository.GetAll(filter);
+            return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
 
