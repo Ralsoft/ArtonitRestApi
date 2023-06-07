@@ -35,7 +35,8 @@ namespace ArtonitRestApi.Controllers
         public HttpResponseMessage AddParking([FromBody] ParkingModelBase body)
         {
             string result = "";
-            if (body.Id_div == null || body.Name == null)
+            //if (body.Id_div == null || body.Name == null)
+            if (body.Name == null)
             {
                 result = "37 неполные данные";
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);

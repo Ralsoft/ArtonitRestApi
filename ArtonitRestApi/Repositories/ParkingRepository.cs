@@ -13,10 +13,24 @@ namespace ArtonitRestApi.Repositories
     {
         public static List<ParkingModel> GetAll()
         {
-            var query = $@"select p.id, p.name, p.enabled, p.created, p.parent, p.id_div from hl_parking p
+            var query = $@"select p.id, p.name, p.enabled, p.created, p.parent from hl_parking p
             where p.parent=14";
             return DatabaseService.GetList<ParkingModel>(query);
         }
+
+
+        //реализация через NonQuery 7.06.2023
+        public static List<ParkingModel> GetAll_nq()//
+        {
+            var query = $@"select p.id, p.name, p.enabled, p.created, p.parent from hl_parking p
+            where p.parent=14";
+            /*
+             что и как тут надо сделать, чтобы собрать ответ и при этом испльзовать только ExecuteNonQuery(string query) и НЕ использовать GetList<T>(string query)? 
+             */
+            return DatabaseService.GetList<ParkingModel>(query);
+        }
+
+
 
         public static string Add(ParkingModelBase parkingModelBase)
         {

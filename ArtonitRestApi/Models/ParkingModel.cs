@@ -13,8 +13,8 @@ namespace ArtonitRestApi.Models
         public string Name { get; set; }  
 
 
-        [DatabaseName("ID_DIV")]
-        public string Id_div { get; set; }
+       // [DatabaseName("ID_DIV")]
+       // public string Id_div { get; set; }
 
     }
 
@@ -31,7 +31,7 @@ namespace ArtonitRestApi.Models
         public void Init(ParkingModelBase parkingModel)
         {
             Name = parkingModel.Name;
-            Id_div = parkingModel.Id_div;
+            //Id_div = parkingModel.Id_div;
         }
     }
 
