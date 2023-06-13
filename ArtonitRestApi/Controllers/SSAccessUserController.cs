@@ -1,8 +1,5 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Repositories;
-using ArtonitRestApi.Services;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -13,11 +10,33 @@ namespace ArtonitRestApi.Controllers
     {
 
         [HttpGet]
-        public List<SSAccessuserAdd> UserAccessGet() => SSAccessUserRepository.GetAll(); 
-        
+        public HttpResponseMessage UserAccessGet()
+        {
+            var result = SSAccessUserRepository.GetAll();
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
+        }
+
 
         [HttpGet]
-        public SSAccessuserAdd UserAccessGet(string id) => SSAccessUserRepository.GetById(id);
+        public HttpResponseMessage UserAccessGet(string id) 
+        {
+            var result = SSAccessUserRepository.GetById(id);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
+        }
 
 
         [HttpPost]
@@ -26,16 +45,13 @@ namespace ArtonitRestApi.Controllers
           
             var result = SSAccessUserRepository.Add(body);
 
-            try
+            if (result.State == State.Successes)
             {
-                var resultInt = Convert.ToInt32(result);
-                return Request.CreateResponse(HttpStatusCode.OK, resultInt);
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
             }
-            catch (Exception)
-            {
-                HttpError err = new HttpError(result);
-                return Request.CreateResponse(HttpStatusCode.BadRequest, err);
-            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
 
       
@@ -45,16 +61,13 @@ namespace ArtonitRestApi.Controllers
 
             var result = SSAccessUserRepository.Delete(userId, accessnameId);
 
-            try
+            if (result.State == State.Successes)
             {
-                var resultInt = Convert.ToInt32(result);
-                return Request.CreateResponse(HttpStatusCode.OK, resultInt);
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
             }
-            catch (Exception)
-            {
-                HttpError err = new HttpError(result);
-                return Request.CreateResponse(HttpStatusCode.BadRequest, err);
-            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
     }
 }

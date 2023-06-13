@@ -8,32 +8,32 @@ namespace ArtonitRestApi.Models
     [DatabaseName("HL_PARKING")]
     public class ParkingModelBase
     {
-
         [DatabaseName("NAME")]
         public string Name { get; set; }  
-
-
-       // [DatabaseName("ID_DIV")]
-       // public string Id_div { get; set; }
-
     }
 
-    [DatabaseName("HL_PARKING")]
-    public class ParkingModel : ParkingModelBase
+    public class ParkingUpdateDTO : ParkingModelBase
     {
-        [DatabaseName("ID")]
-        [DatabasePrimaryKey]
-        public int Id { get; set; }
-
-       [DatabaseName("parent")]
+        [DatabaseName("parent")]
         public int? Parent { get; set; }
 
         public void Init(ParkingModelBase parkingModel)
         {
             Name = parkingModel.Name;
-            //Id_div = parkingModel.Id_div;
         }
     }
 
-   
+    [DatabaseName("HL_PARKING")]
+    public class ParkingModel : ParkingUpdateDTO
+    {
+        [DatabaseName("ID")]
+        [DatabasePrimaryKey]
+        public int Id { get; set; }
+
+        public void Init(ParkingUpdateDTO parkingModel)
+        {
+            Name = parkingModel.Name;
+            Parent = parkingModel.Parent;
+        }
+    }  
 }

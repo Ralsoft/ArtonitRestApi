@@ -1,55 +1,44 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Services;
-using DocumentFormat.OpenXml.Wordprocessing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArtonitRestApi.Repositories
 {
     public class ParkingRepository
     {
-        public static List<ParkingModel> GetAll()
+        public static DatabaseResult GetAll()
         {
             var query = $@"select p.id, p.name, p.enabled, p.created, p.parent from hl_parking p
-            where p.parent=14";
+                where p.parent=14";
+
             return DatabaseService.GetList<ParkingModel>(query);
         }
 
-
-        //реализация через NonQuery 7.06.2023
-        public static List<ParkingModel> GetAll_nq()//
+        public static DatabaseResult GetById(string id)
         {
             var query = $@"select p.id, p.name, p.enabled, p.created, p.parent from hl_parking p
-            where p.parent=14";
-            /*
-             что и как тут надо сделать, чтобы собрать ответ и при этом испльзовать только ExecuteNonQuery(string query) и НЕ использовать GetList<T>(string query)? 
-             */
-            return DatabaseService.GetList<ParkingModel>(query);
+            where p.parent=14 and p.id = {id}";
+            return DatabaseService.Get<ParkingModel>(query);
         }
 
-
-
-        public static string Add(ParkingModelBase parkingModelBase)
+        public static DatabaseResult Add(ParkingModelBase parkingModelBase)
         {
-            
             var parkingModel = new ParkingModel();
             parkingModel.Init(parkingModelBase);
             parkingModel.Parent = 14;
-            parkingModel.Parent = 14;
-            
 
             var query = DatabaseService.GenerateCreateQuery(parkingModel);
-            var result = DatabaseService.ExecuteNonQuery(query);
-            return result.ToString();
+            return DatabaseService.ExecuteNonQuery(query);
         }
 
-        public static string Update(ParkingModel parkingModelBase, string id_code)
+        public static DatabaseResult Update(ParkingUpdateDTO parkingModelBase, string id)
         {
-            var result = DatabaseService.Update(parkingModelBase, $"ID_CODE={id_code}");
-            return result.ToString();
+            return DatabaseService.Update(parkingModelBase, $"ID={id}");
+        }
+
+        public static DatabaseResult Delete(string id)
+        {
+            var query = $"delete from HL_PARKING where ID={id}";
+            return DatabaseService.ExecuteNonQuery(query);
         }
     }
 }

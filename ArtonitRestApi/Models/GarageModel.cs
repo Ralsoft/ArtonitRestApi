@@ -9,14 +9,14 @@ namespace ArtonitRestApi.Models
     [DatabaseName("HL_GARAGENAME")]
     public class GarageModel
     {
+        [DatabaseName("ID")]
+        public int Id { get; set; }
+
         [DatabaseName("NAME")]
         public string Name { get; set; }
 
         [DatabaseName("DIV_CODE")]
         public string DivCode { get; set; }
-
-        [DatabaseName("ID")]
-        public int Id { get; set; }
 
         [DatabaseName("CREATED")]
         public DateTime DateStart { get; set; }
@@ -24,7 +24,4 @@ namespace ArtonitRestApi.Models
         [DatabaseName("NOT_COUNT")]
         public int NotCount { get; set; }
     }
-
-
-   
 }

@@ -10,11 +10,11 @@ namespace ArtonitRestApi.Services
 {
     public class DatabaseService
     {
-        public static List<T> GetList<T>(string query)
+        public static DatabaseResult GetList<T>(string query)
         {
             query = query.ToUpper();
-
             LoggerService.Log<DatabaseService>("Info", query);
+
             var rows = new List<T>();
 
             var connectionString = SettingsService.DatabaseConnectionString;
@@ -31,7 +31,7 @@ namespace ArtonitRestApi.Services
                     {
                         while (dr.Read())
                         {
-                            var instance = (T) Activator.CreateInstance(typeof(T));
+                            var instance = (T)Activator.CreateInstance(typeof(T));
 
                             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
                                 BindingFlags.NonPublic | BindingFlags.Public);//СВОЙСТВА МОДЕЛИ
@@ -46,68 +46,60 @@ namespace ArtonitRestApi.Services
                                 LoggerService.Log<DatabaseService>("INFO", $"{property.PropertyType.Name} | V: {dr[databaseNameAttribute.Value.ToUpper()].ToString()}");
                                 try
                                 {
-                                    switch (property.PropertyType.Name)
+                                    var dbValue = dr[databaseNameAttribute.Value.ToUpper()];
+                                    var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
+                                    bool isNullable = underlyingType != null;
+
+                                    if (isNullable && dbValue == DBNull.Value)
                                     {
-                                        case "String":
-                                            {
-                                                property.SetValue(instance, dr[databaseNameAttribute.Value.ToUpper()].ToString());
-                                                break;
-                                            }
-                                        case "Int32":
-                                            {
-                                                property.SetValue(instance,
-                                                        Convert.ToInt32(dr[databaseNameAttribute.Value.ToUpper()]));
-                                                break;
-                                            }
-                                        case "DateTime":
-                                            {
-                                                property.SetValue(instance,
-                                                       DateTime.Parse(dr[databaseNameAttribute.Value.ToUpper()].ToString()));
-
-                                                break;
-                                            }
-                                        case "TimeSpan":
-                                            {
-                                                property.SetValue(instance,
-                                                        TimeSpan.Parse(dr[databaseNameAttribute.Value.ToUpper()].ToString()));
-
-                                                break;
-                                            }
-                                        default:
-
-                                            break;
+                                        property.SetValue(instance, null); // Установка значения null для nullable типа
+                                    }
+                                    else
+                                    {
+                                        var convertedValue = Convert.ChangeType(dbValue, underlyingType ?? property.PropertyType);
+                                        property.SetValue(instance, convertedValue);
                                     }
                                 }
                                 catch (Exception ex)
                                 {
                                     LoggerService.Log<DatabaseService>("Exception", ex.Message);
+                                    return new DatabaseResult()
+                                    {
+                                        ErrorMessage = ex.Message,
+                                        State = State.Error,
+                                    };
                                 }
-                                
                             }
 
                             rows.Add(instance);
                         }
                     }
 
-                    return rows;
+                    return new DatabaseResult()
+                    {
+                        State = State.Successes,
+                        Value = rows
+                    };
                 }
                 catch (Exception ex)
                 {
                     LoggerService.Log<DatabaseService>("Exception", $"{ex.Message}");
+                    return new DatabaseResult()
+                    {
+                        ErrorMessage = ex.Message,
+                        State = State.Error,
+                    };
                 }
             }
-
-            return rows;
         }
 
 
-        public static T Get<T>(string query)
+        public static DatabaseResult Get<T>(string query)
         {
             query = query.ToUpper();
 
             LoggerService.Log<DatabaseService>("Info", query);
-            var instance = (T) Activator.CreateInstance(typeof(T));
-
+            
             var connectionString = SettingsService.DatabaseConnectionString;
 
             using (var connection = new FbConnection(connectionString))
@@ -120,10 +112,14 @@ namespace ArtonitRestApi.Services
 
                     using (var dr = cmd.ExecuteReader())
                     {
+                        
+
                         while (dr.Read())
                         {
+                            var instance = (T)Activator.CreateInstance(typeof(T));
+
                             var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Static |
-                                BindingFlags.NonPublic | BindingFlags.Public);
+                                BindingFlags.NonPublic | BindingFlags.Public); //СВОЙСТВА МОДЕЛИ
 
                             foreach (var property in properties)
                             {
@@ -134,59 +130,60 @@ namespace ArtonitRestApi.Services
 
                                 try
                                 {
-                                    switch (property.PropertyType.Name)
+                                    var dbValue = dr[databaseNameAttribute.Value.ToUpper()];
+                                    var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
+                                    bool isNullable = underlyingType != null;
+
+                                    if (isNullable && dbValue == DBNull.Value)
                                     {
-                                        case "String":
-                                            {
-                                                property.SetValue(instance,
-                                                    dr[databaseNameAttribute.Value.ToUpper()].ToString());
-                                                break;
-                                            }
-                                        case "Int32":
-                                            {
-                                                property.SetValue(instance,
-                                                    Convert.ToInt32(dr[databaseNameAttribute.Value.ToUpper()]));
-                                                break;
-                                            }
-                                        case "DateTime":
-                                            {
-                                                property.SetValue(instance,
-                                                    DateTime.Parse(dr[databaseNameAttribute.Value.ToUpper()].ToString()));
-                                                break;
-                                            }
-                                        case "TimeSpan":
-                                            {
-                                                property.SetValue(instance,
-                                                    TimeSpan.Parse(dr[databaseNameAttribute.Value.ToUpper()].ToString()));
-                                                break;
-                                            }
-                                        default:
-                                            break;
+                                        property.SetValue(instance, null); // Установка значения null для nullable типа
+                                    }
+                                    else
+                                    {
+                                        var convertedValue = Convert.ChangeType(dbValue, underlyingType ?? property.PropertyType);
+                                        property.SetValue(instance, convertedValue);
                                     }
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
                                     LoggerService.Log<DatabaseService>("Exception", ex.Message);
+                                    return new DatabaseResult()
+                                    {
+                                        ErrorMessage = ex.Message,
+                                        State = State.Error,
+                                    };
                                 }
                             }
 
-                            return instance;
+                            return new DatabaseResult()
+                            {
+                                State = State.Successes,
+                                Value = instance
+                            };
                         }
 
-                        LoggerService.Log<DatabaseService>("Info", $"Результат запроса пустой");
+                        return new DatabaseResult()
+                        {
+                            State = State.Error,
+                            ErrorMessage = "Запрос в базу данных не дал результата"
+                        };
                     }
+
+                   
                 }
                 catch (Exception ex)
                 {
                     LoggerService.Log<DatabaseService>("Exception", $"{ex.Message}");
+                    return new DatabaseResult()
+                    {
+                        ErrorMessage = ex.Message,
+                        State = State.Error,
+                    };
                 }
             }
-
-            return instance;
         }
 
-
-        public static string ExecuteNonQuery(string query)
+        public static DatabaseResult ExecuteNonQuery(string query)
         {
             query = query.ToUpper();
 
@@ -203,18 +200,24 @@ namespace ArtonitRestApi.Services
                     var cmd = new FbCommand(query, connection);
                     var result = cmd.ExecuteNonQuery();
 
-                    return result.ToString();
+                    return new DatabaseResult()
+                    {
+                        Value = result,
+                        State = State.Successes
+                    };
                 }
                 catch (Exception ex)
                 {
                     LoggerService.Log<DatabaseService>("Exception", $"{ex.Message}");
-                    return ex.Message;
+                    return new DatabaseResult() {
+                        State = State.Error,
+                        ErrorMessage = ex.Message
+                    };
                 }
             }
         }
 
-
-        public static string Create<T>(T instance)
+        public static DatabaseResult Create<T>(T instance)
         {
             string query = GenerateCreateQuery(instance);
             LoggerService.Log<DatabaseService>("DEBUG", query);
@@ -222,16 +225,12 @@ namespace ArtonitRestApi.Services
             return ExecuteNonQuery(query);
         }
 
-
-
-
-        public static string Update<T>(T instance, string condition)
+        public static DatabaseResult Update<T>(T instance, string condition)
         {
             string query = GenerateUpdateQuery(instance, condition);
 
             return ExecuteNonQuery(query);
         }
-
 
         public static string GenerateUpdateQuery<T>(T instance, string condition)
         {
@@ -333,7 +332,6 @@ namespace ArtonitRestApi.Services
 
             return query;
         }
-
 
         public static string GenerateCreateQuery<T>(T instance)
         {

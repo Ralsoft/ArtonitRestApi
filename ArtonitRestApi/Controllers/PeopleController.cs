@@ -14,23 +14,47 @@ namespace ArtonitRestApi.Controllers
     {
 
         [HttpGet]
-        public People UserGetById(string id)
+        public HttpResponseMessage UserGetById(string id)
         {
-            return PeopleRepository.GetById(id);
+            var result = PeopleRepository.GetById(id);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
 
 
         [HttpGet]
-        public People UserGetByCard(string card, int? cardType = -1)
+        public HttpResponseMessage UserGetByCard(string card, int? cardType = -1)
         {
-            return PeopleRepository.GetByCard(card, cardType);
+            var result = PeopleRepository.GetByCard(card, cardType);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
 
 
         [HttpGet]
-        public List<People> UserListGet()
+        public HttpResponseMessage UserListGet()
         {
-           return PeopleRepository.GetAll();
+           var result = PeopleRepository.GetAll();
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
 
 
@@ -48,10 +72,13 @@ namespace ArtonitRestApi.Controllers
 
             var result = PeopleRepository.Add(body);
 
-            if (result > 0)
-                return Request.CreateResponse(HttpStatusCode.OK, result);
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
 
-            return Request.CreateResponse(HttpStatusCode.BadRequest);
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
 
 
@@ -67,28 +94,15 @@ namespace ArtonitRestApi.Controllers
                     new HttpError("не хватает прав авторизации"));
             }
 
-            var resultUpdate = PeopleRepository.Update(body, id);
+            var result= PeopleRepository.Update(body, id);
 
-            try
+            if (result.State == State.Successes)
             {
-                int result = Convert.ToInt32(resultUpdate);
-
-                if (result > 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK);
-                }
-                else
-                {
-                    HttpError err = new HttpError(result.ToString());
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, err);
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
             }
-            catch (Exception)
-            {
 
-                HttpError err = new HttpError(resultUpdate);
-                return Request.CreateResponse(HttpStatusCode.BadRequest, err);
-            }
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }  
         
 
@@ -104,28 +118,15 @@ namespace ArtonitRestApi.Controllers
                     new HttpError("не хватает прав авторизации"));
             }
 
-            var resultDelete = PeopleRepository.Delete(id);
+            var result = PeopleRepository.Delete(id);
 
-            try
+            if (result.State == State.Successes)
             {
-                int result = Convert.ToInt32(resultDelete);
-
-                if (result > 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK);
-                }
-                else
-                {
-                    HttpError err = new HttpError(result.ToString());
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, err);
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
             }
-            catch (Exception)
-            {
 
-                HttpError err = new HttpError(resultDelete);
-                return Request.CreateResponse(HttpStatusCode.BadRequest, err);
-            }
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
     }
 }

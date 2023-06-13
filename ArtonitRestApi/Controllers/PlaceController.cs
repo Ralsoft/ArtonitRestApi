@@ -1,6 +1,5 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Services;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -14,26 +13,34 @@ namespace ArtonitRestApi.Controllers
         /// Получает список мест из базы данных по запросу select * from hl_place
         /// </summary>
         /// <returns>Список мест в формате json</returns>
+        
         [HttpGet]
-        //public List<PlaceModel> GetPlaceList() => DatabaseService.GetList<PlaceModel>("select * from hl_place");
-        public List<PlaceModel> GetPlaceList()
+        public HttpResponseMessage GetPlaceList()
         {
+            var query = $@"select hlp.id, hlp.placenumber, hlp.description, hlp.note, hlp.status, hlp.name, hlp.id_parking from hl_place hlp";
+            var result = DatabaseService.GetList<PlaceModel>(query);
 
-             var query = $@"select hlp.id, hlp.placenumber, hlp.description, hlp.note, hlp.status, hlp.name, hlp.id_parking from hl_place hlp";
-            return DatabaseService.GetList<PlaceModel>(query);
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
         
+
         /// <summary>
         /// Добавить машиноместо на указанную парковку
         /// </summary>
         /// <returns>Результат вставки в формате json</returns>
         
         [HttpPost]
-        //public List<PlaceModel> addPlaceL() => DatabaseService.Create<PlaceModel>("select * from hl_place");
         public HttpResponseMessage AddPlace([FromBody] PlaceModel body)
         {
             return Request.CreateResponse(HttpStatusCode.NotImplemented);
         }
+
 
         /// <summary>
         /// Удаляет машиноместо по указанному id
@@ -42,9 +49,9 @@ namespace ArtonitRestApi.Controllers
         [HttpDelete]
         public HttpResponseMessage DelPlaceL()
         {
-            //DatabaseService.GetList<PlaceModel>("select * from hl_place");
             return Request.CreateResponse(HttpStatusCode.OK);
         }
+
 
         /// <summary>
         /// Меняет указанные свойства для указаннома машиноместа
@@ -54,24 +61,31 @@ namespace ArtonitRestApi.Controllers
         [HttpPatch]
         public HttpResponseMessage UpdatePlaceL()
         {
-            DatabaseService.GetList<PlaceModel>("select * from hl_place");
             return Request.CreateResponse(HttpStatusCode.NotImplemented);
         }
+
+
         /// <summary>
         /// Получить свойств парковочного места
         /// </summary>
         /// <returns>Результат</returns>
-
-       
+        
         [HttpGet]
-
         public HttpResponseMessage GetPlaceById(int id)
         {
-            
-            //var query = $@"select * from hl_place hlp where hlp.id={id}";
+            var query = $@"select * from hl_place hlp where hlp.id={id}";
 
-            //return DatabaseService.Get<PlaceModel>(query);
-            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+            var result = DatabaseService.Get<PlaceModel>(query);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest,
+                    new HttpError(result.ErrorMessage));
+            }
         }
     }
 }

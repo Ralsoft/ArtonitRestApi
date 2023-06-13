@@ -3,28 +3,32 @@ using ArtonitRestApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ArtonitRestApi.Repositories
 {
     public class GrzRepository
     {
-        public static List<GrzModel> GetAll(string filter)
+        public static DatabaseResult GetAll(string filter)
         {
-            var queryGetCards = "select c.id_card, c.id_pep, c.timestart, c.timeend, c.note, c.status, " +
-            "c.\"ACTIVE\", c.flag, c.id_cardtype from card c where c.id_cardtype=4";
+            var queryGetCards = @"select c.id_card, c.id_pep, c.timestart, c.timeend, c.note, 
+                c.status, c.""ACTIVE"", c.flag, c.id_cardtype from card c where c.id_cardtype=4";
 
-            if (filter.Length > 0)
+            var result = DatabaseService.GetList<GrzModel>(queryGetCards);
+
+            if(result.State == State.Successes && filter.Length > 0)
             {
-                return DatabaseService.GetList<GrzModel>(queryGetCards)
+                var list = (result.Value as List<GrzModel>)
                     .Where(x => x.IdCard.Contains(filter)).ToList();
+
+                result.Value = list;
+
+                return result;
             }
 
-            return DatabaseService.GetList<GrzModel>(queryGetCards);
+            return result;
         }
 
-        public static List<EventModel> EventInfo(string grz, DateTime? dateFrom = null, DateTime? dateTo = null)
+        public static DatabaseResult EventInfo(string grz, DateTime? dateFrom = null, DateTime? dateTo = null)
         {
             if (dateFrom == null) dateFrom = DateTime.Now.AddDays(-3);
             if (dateTo == null) dateTo = DateTime.Now;

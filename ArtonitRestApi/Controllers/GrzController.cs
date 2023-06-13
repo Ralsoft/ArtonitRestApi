@@ -26,7 +26,14 @@ namespace ArtonitRestApi.Controllers
         public HttpResponseMessage Getlist(string filter = "")
         {
             var result = GrzRepository.GetAll(filter);
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
 
 
@@ -39,12 +46,20 @@ namespace ArtonitRestApi.Controllers
         /// <returns>Список событий.</returns>
         
         [HttpGet]
-        public List<EventModel> EventInfo(
+        public HttpResponseMessage EventInfo(
             string grz,
             [SwaggerParameter(Description = "Значение по умолчанию: -3 дня от текущей даты")] DateTime? dateFrom = null,
             [SwaggerParameter(Description = "Значение по умолчанию: текущей даты")] DateTime? dateTo = null)
         {
-            return GrzRepository.EventInfo(grz, dateFrom, dateTo);
+            var result = GrzRepository.EventInfo(grz, dateFrom, dateTo);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest,
+                new HttpError(result.ErrorMessage));
         }
     }
 }

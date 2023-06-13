@@ -1,9 +1,5 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Repositories;
-using ArtonitRestApi.Services;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Wordprocessing;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -21,8 +17,33 @@ namespace ArtonitRestApi.Controllers
         [HttpGet]
         public HttpResponseMessage GetParkingList()
         {
-            var list = ParkingRepository.GetAll();
-            return Request.CreateResponse(HttpStatusCode.OK, list);
+            var result = ParkingRepository.GetAll();
+            
+            if(result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest, result.ErrorMessage);
+        }
+
+        /// <summary>
+        /// Получить список машиномест для указанного гаража
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        [HttpGet]
+        public HttpResponseMessage ParkingGetById(string id)
+        {
+            var result = ParkingRepository.GetById(id);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest, result.ErrorMessage);
         }
 
 
@@ -34,31 +55,20 @@ namespace ArtonitRestApi.Controllers
         [HttpPost]
         public HttpResponseMessage AddParking([FromBody] ParkingModelBase body)
         {
-            string result = "";
-            //if (body.Id_div == null || body.Name == null)
             if (body.Name == null)
             {
-                result = "37 неполные данные";
-                return Request.CreateResponse(HttpStatusCode.BadRequest, result);
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "37 неполные данные");
             }
 
-            result = ParkingRepository.Add(body);
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            var result = ParkingRepository.Add(body);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest, result.ErrorMessage);
         }
-
-
-        /// <summary>
-        /// Удаляет гараж по указанному id
-        /// </summary>
-        /// <returns>Результат удаления 0 -  успешно, 1 - ошибка</returns>
-
-        [HttpDelete]
-        public HttpResponseMessage DelParking()
-        { 
-            //DatabaseService.GetList<ParkingModel>("select * from hl_parking");
-            return Request.CreateResponse(HttpStatusCode.NotImplemented);
-        }
-
 
         /// <summary>
         /// Меняет указанные свойства для указаннома гаража
@@ -66,36 +76,34 @@ namespace ArtonitRestApi.Controllers
         /// <returns></returns>
 
         [HttpPatch]
-        public HttpResponseMessage UpdateParking(ParkingModel body, string id_code)
+        public HttpResponseMessage UpdateParking(ParkingUpdateDTO body, string id_code)
         {
+            var result = ParkingRepository.Update(body, id_code);
 
-            string result = "";
-            /*
-            if (body.Id_div == null || body.Name == null )
+            if (result.State == State.Successes)
             {
-                result = "37 неполные данные";
-                return Request.CreateResponse(HttpStatusCode.BadRequest, result);
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
             }
-            */
 
-            result = ParkingRepository.Update(body, id_code);
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            return Request.CreateResponse(HttpStatusCode.BadRequest, result.ErrorMessage);
         }
 
-
         /// <summary>
-        /// Получить список машиномест для указанного гаража
+        /// Удаляет гараж по указанному id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>Результат удаления 0 -  успешно, 1 - ошибка</returns>
 
-        [HttpGet]
-        public HttpResponseMessage ParkingGetById(string id)
+        [HttpDelete]
+        public HttpResponseMessage DelParking(string id)
         {
-          var query = $@"select * from hl_Parking hlg
-                where hlg.id_Parkingname= {id}";
-           // return DatabaseService.Get<ParkingModel>(query);
-            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+            var result = ParkingRepository.Delete(id);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest, result.ErrorMessage);
         }
     }
 }

@@ -310,6 +310,7 @@
     <Compile Include="Controllers\SSAccessUserController.cs" />
     <Compile Include="Controllers\PeopleController.cs" />
     <Compile Include="Annotation\DatabaseNameAttribute.cs" />
+    <Compile Include="Models\DatabaseResult.cs" />
     <Compile Include="Models\ParkingModel.cs" />
     <Compile Include="Models\GarageModel.cs" />
     <Compile Include="Models\CardBase.cs" />

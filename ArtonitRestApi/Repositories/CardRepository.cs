@@ -5,7 +5,7 @@ namespace ArtonitRestApi.Repositories
 {
     public class CardRepository
     {
-        public int Add(CardBase cardBase, int userId)
+        public DatabaseResult Add<T>(CardBase cardBase, int userId)
         {
             var card = new CardAdd
             {
@@ -19,9 +19,7 @@ namespace ArtonitRestApi.Repositories
 
             card.InitializeFromCardBase(cardBase);
 
-            var result = DatabaseService.Create(card);
-
-            return -1;
+            return DatabaseService.Create(card);
         }
 
         public void Update()
