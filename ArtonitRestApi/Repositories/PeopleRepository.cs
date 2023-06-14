@@ -80,6 +80,8 @@ namespace ArtonitRestApi.Repositories
             var rdbDatabase = DatabaseService
                 .Get<RDBDatabase>("select GEN_ID (gen_people_id, 1) from RDB$DATABASE");
 
+            return rdbDatabase;
+
             if(rdbDatabase.State == State.Successes)
             {
                 var people = new People();

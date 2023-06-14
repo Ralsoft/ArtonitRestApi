@@ -112,8 +112,6 @@ namespace ArtonitRestApi.Services
 
                     using (var dr = cmd.ExecuteReader())
                     {
-                        
-
                         while (dr.Read())
                         {
                             var instance = (T)Activator.CreateInstance(typeof(T));
@@ -131,6 +129,7 @@ namespace ArtonitRestApi.Services
                                 try
                                 {
                                     var dbValue = dr[databaseNameAttribute.Value.ToUpper()];
+
                                     var underlyingType = Nullable.GetUnderlyingType(property.PropertyType);
                                     bool isNullable = underlyingType != null;
 
@@ -185,8 +184,6 @@ namespace ArtonitRestApi.Services
 
         public static DatabaseResult ExecuteNonQuery(string query)
         {
-            query = query.ToUpper();
-
             LoggerService.Log<DatabaseService>("Info", query);
 
             var connectionString = SettingsService.DatabaseConnectionString;
@@ -221,7 +218,6 @@ namespace ArtonitRestApi.Services
         {
             string query = GenerateCreateQuery(instance);
             LoggerService.Log<DatabaseService>("DEBUG", query);
-
             return ExecuteNonQuery(query);
         }
 
@@ -269,9 +265,9 @@ namespace ArtonitRestApi.Services
                             case "String":
                                 {
                                     if (systemWord != null)
-                                        query += $@"""{databaseNameAttribute.Value.ToUpper()}"" = ";
+                                        query += $@"""{databaseNameAttribute.Value}"" = ";
                                     else
-                                        query += databaseNameAttribute.Value.ToUpper() + " = ";
+                                        query += databaseNameAttribute.Value + " = ";
 
                                     query += $"'{value}', ";
                                     break;
@@ -338,6 +334,7 @@ namespace ArtonitRestApi.Services
             string query;
 
             var attribute = Attribute.GetCustomAttribute(typeof(T), typeof(DatabaseNameAttribute));
+            
             if (attribute is DatabaseNameAttribute databaseName)
             {
                 query = $"insert into {databaseName.Value} (";
@@ -367,11 +364,11 @@ namespace ArtonitRestApi.Services
 
                     if(systemWord != null)
                     {
-                        query += $@"""{databaseNameAttribute.Value.ToUpper()}"", ";
+                        query += $@"""{databaseNameAttribute.Value}"", ";
                     }
                     else
                     {
-                        query += databaseNameAttribute.Value.ToUpper() + ", ";
+                        query += databaseNameAttribute.Value + ", ";
                     }
                 }
             }

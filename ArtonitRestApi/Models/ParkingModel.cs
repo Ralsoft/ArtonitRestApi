@@ -27,7 +27,6 @@ namespace ArtonitRestApi.Models
     public class ParkingModel : ParkingUpdateDTO
     {
         [DatabaseName("ID")]
-        [DatabasePrimaryKey]
         public int Id { get; set; }
 
         public void Init(ParkingUpdateDTO parkingModel)

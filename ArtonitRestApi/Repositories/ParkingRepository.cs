@@ -1,5 +1,6 @@
 ﻿using ArtonitRestApi.Models;
 using ArtonitRestApi.Services;
+using System;
 
 namespace ArtonitRestApi.Repositories
 {
@@ -22,12 +23,28 @@ namespace ArtonitRestApi.Repositories
 
         public static DatabaseResult Add(ParkingModelBase parkingModelBase)
         {
-            var parkingModel = new ParkingModel();
-            parkingModel.Init(parkingModelBase);
-            parkingModel.Parent = 14;
+            var rdbDatabase = DatabaseService
+               .Get<RDBDatabase>("select GEN_ID (gen_hl_parking_id, 1) from RDB$DATABASE");
 
-            var query = DatabaseService.GenerateCreateQuery(parkingModel);
-            return DatabaseService.ExecuteNonQuery(query);
+
+            if (rdbDatabase.State == State.Successes)
+            {
+                var parkingModel = new ParkingModel();
+                parkingModel.Id = (rdbDatabase.Value as RDBDatabase).Id;
+                parkingModel.Init(parkingModelBase);
+                parkingModel.Parent = 14;
+
+                var result = DatabaseService.Create(parkingModel);
+
+                if(result.State == State.Successes)
+                {
+                    result.Value = parkingModel.Id;
+                }
+               
+                return result;
+            }
+
+            return rdbDatabase;
         }
 
         public static DatabaseResult Update(ParkingUpdateDTO parkingModelBase, string id)
