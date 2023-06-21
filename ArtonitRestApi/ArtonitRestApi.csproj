@@ -334,6 +334,7 @@
     <Compile Include="Repositories\GrzRepository.cs" />
     <Compile Include="Repositories\ParkingRepository.cs" />
     <Compile Include="Repositories\PeopleRepository.cs" />
+    <Compile Include="Repositories\PlaceRepository.cs" />
     <Compile Include="Repositories\SSAccessUserRepository.cs" />
     <Compile Include="Service1.cs">
       <SubType>Component</SubType>

@@ -1,4 +1,5 @@
 ﻿using ArtonitRestApi.Models;
+using ArtonitRestApi.Repositories;
 using ArtonitRestApi.Services;
 using System.Net;
 using System.Net.Http;
@@ -17,8 +18,8 @@ namespace ArtonitRestApi.Controllers
         [HttpGet]
         public HttpResponseMessage GetPlaceList()
         {
-            var query = $@"select hlp.id, hlp.placenumber, hlp.description, hlp.note, hlp.status, hlp.name, hlp.id_parking from hl_place hlp";
-            var result = DatabaseService.GetList<PlaceModel>(query);
+
+            var result = PlaceRepository.GetAll();
 
             if (result.State == State.Successes)
             {
@@ -28,13 +29,14 @@ namespace ArtonitRestApi.Controllers
             return Request.CreateResponse(HttpStatusCode.BadRequest,
                 new HttpError(result.ErrorMessage));
         }
-        
+
+      
 
         /// <summary>
         /// Добавить машиноместо на указанную парковку
         /// </summary>
         /// <returns>Результат вставки в формате json</returns>
-        
+
         [HttpPost]
         public HttpResponseMessage AddPlace([FromBody] PlaceModel body)
         {
