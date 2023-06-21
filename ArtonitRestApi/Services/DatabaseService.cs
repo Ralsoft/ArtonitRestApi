@@ -43,7 +43,7 @@ namespace ArtonitRestApi.Services
 
                                 if (databaseNameAttribute == null) continue;
 
-                                LoggerService.Log<DatabaseService>("INFO", $"{property.PropertyType.Name} | V: {dr[databaseNameAttribute.Value.ToUpper()].ToString()}");
+                                LoggerService.Log<DatabaseService>("INFO", $"{property.PropertyType.Name} | V: {dr[databaseNameAttribute.Value.ToUpper()]}");
                                 try
                                 {
                                     var dbValue = dr[databaseNameAttribute.Value.ToUpper()];

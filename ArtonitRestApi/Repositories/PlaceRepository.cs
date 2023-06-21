@@ -11,7 +11,8 @@ namespace ArtonitRestApi.Repositories
   
 
             // var query = $@"select hlp.id, hlp.placenumber, hlp.description, hlp.note, hlp.status, hlp.name, hlp.id_parking from hl_place hlp";
-             var query = $@"SELECT HLP.ID, COALESCE(HLP.PLACENUMBER, '') as PLACENUMBER, 
+             var query = $@"SELECT HLP.ID,
+                        COALESCE(HLP.PLACENUMBER, 0) as PLACENUMBER, 
                         COALESCE(HLP.DESCRIPTION, '') AS DESCRIPTION, 
                         COALESCE(HLP.NOTE, '') AS NOTE, 
                         COALESCE(HLP.STATUS, '') AS STATUS, 
