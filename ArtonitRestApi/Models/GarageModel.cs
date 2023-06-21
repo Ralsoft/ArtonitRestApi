@@ -22,6 +22,6 @@ namespace ArtonitRestApi.Models
         public DateTime DateStart { get; set; }
 
         [DatabaseName("NOT_COUNT")]
-        public int NotCount { get; set; }
+        public int? NotCount { get; set; }
     }
 }

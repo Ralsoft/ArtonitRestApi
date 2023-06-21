@@ -8,8 +8,12 @@ namespace ArtonitRestApi.Repositories
     {
         public static DatabaseResult GetAll()
         {
+            /*
             var query = $@"select p.id, p.name, p.enabled, p.created, p.parent from hl_parking p
                 where p.parent=14";
+            */
+            var query = $@"select p.id, p.name, p.enabled, p.created, p.parent from hl_parking p";
+
 
             return DatabaseService.GetList<ParkingModel>(query);
         }

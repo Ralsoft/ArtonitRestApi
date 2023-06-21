@@ -35,5 +35,15 @@ namespace ArtonitRestApi.Repositories
 
             return rdbDatabase;
         }
+
+        public static DatabaseResult GetById(string id)
+        {
+            var query = $@"select hlgn.id, hlgn.name, hlgn.created, hlgn.not_count, 
+                            hlgn.div_code from HL_GARAGENAME hlgn
+                            where hlgn.id={id}";
+            return DatabaseService.Get<GarageModel>(query);
+        }
+
+
     }
 }

@@ -82,7 +82,16 @@ namespace ArtonitRestApi.Controllers
         [HttpGet]
         public HttpResponseMessage GarageGetById(string id)
         {
-            return Request.CreateResponse(HttpStatusCode.NotImplemented);
+            //return Request.CreateResponse(HttpStatusCode.NotImplemented);
+            var result = GarageRepository.GetById(id);
+
+            if (result.State == State.Successes)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, result.Value);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.BadRequest, result.ErrorMessage);
+
         }
     }
 }
